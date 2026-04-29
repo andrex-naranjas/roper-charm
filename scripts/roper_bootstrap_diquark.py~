@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+'''
+-----------------------------------------------------------------------
+ authors: A. Ramirez-Morales (andres.ramirez.morales@cern.ch) and
+          H. Garcia-Tecocoatzi
+ ----------------------------------------------------------------------
+'''
+import os
+import sys
+from os import getcwd
+from iminuit import Minuit
+import numpy as np
+import datetime
+import pandas as pd
+import json
+# framework modules
+from charmfw.baryons import data_preparation as dp
+from charmfw.baryons.charm_diquark import CharmDiquark
+
+
+workpath = os.getcwd()
+
+# for running batch jobs with htcondor
+batch_number = None
+run_baryons = None
+if len(sys.argv) == 4:
+    batch_number = sys.argv[1]
+    workpath = sys.argv[2]
+    run_baryons = sys.argv[3]
+
+config = None
+with open(workpath+"/config/di_quark_config.json", "r") as jsonfile:
+    config = json.load(jsonfile)
+
+if config is not None:
+    if run_baryons is None:
+        run_baryons = config["baryons"]
+    n_events = config["n_events"]
+    asymmetric = config["asymmetric_errors"]
+    decay_width = config["decay_width"]
+    decay_width_em = config["decay_width_em"]
+    bootstrap = config["bootstrap_mass"]
+    bootstrap_width = config["bootstrap_st_dec"]
+    bootstrap_width_em = config["bootstrap_em_dec"]
+    prev_params = config["previous_param"]
+else:
+    sys.exit('Please provide a configuration file. Try again!')
+
+print('Getting paper results for:', run_baryons)
+
+
+# input parameters
+param_u, param_v, param_w, param_x, param_y, param_z,\
+    param_is_omega, param_is_cascade, param_is_sigma = dp.fetch_data_diquark()
+
+
+def model(is_omega, is_cascade, is_sigma, u, v, w, x, y, z, md1, md2, md3, mc, tau, beta, a, b, e, g):
+    mu = ((is_omega*md1 + is_cascade*md2 + is_sigma*md3) * mc)/( (is_omega*md1 + is_cascade*md2 + is_sigma*md3) + mc)
+    
+    return is_omega*md1 + is_cascade*md2 + is_sigma*md3 + mc - \
+        u*(tau**2)*mu*0.5  +  v*(beta/(tau*mu))*0.5 + \
+        w*a + x*b + y*e + z*g
+
+'''
+def model(is_omega, is_cascade, is_sigma, v, w, x, y, z, md1, md2, md3, mc, k, a, b, e, g):
+    return is_omega*md1 + is_cascade*md2 + is_sigma*md3 + mc + \
+        v*k*np.sqrt(1./( (is_omega*md1 + is_cascade*md2 + is_sigma*md3)*mc / ( is_omega*md1 + is_cascade*md2 + is_sigma*md3 + mc ) ) ) +\
+        w*a + x*b + y*e + z*g
+'''
+
+def least_squares(md1, md2, md3, mc, tau, beta, a, b, e, g):
+    # y_var_0 = sigma_0 # best sigma_0= 13.63
+    # yvar_0 = y_var_0*np.ones(17)
+    # yvar = y_errors_exp
+    # yvar_2 = np.power(yvar_0, 2) + np.power(yvar, 2)
+    yvar_2 = 1
+    pred_m = model(param_is_omega, param_is_cascade, param_is_sigma,
+                   param_u, param_v, param_w, param_x, param_y, param_z,
+                   md1, md2, md3, mc, tau, beta, a, b, e, g)
+    
+    print(pred_m)
+    yval_2 = np.power( (pred_m - exp_m), 2)
+    return np.sum( np.divide(yval_2, yvar_2) )
+    # return np.sum((pred_m - exp_m)**2 / (yvar_2**2)) #**2
+
+def fit(least_squares):
+    m = Minuit(least_squares, md1=900, md2=300, md3=250, mc=1400, tau=0, beta=0, a=0, b=0, e=0, g=0)
+    m.limits['md1'] = (850,2000)
+    m.limits['md2'] = (650,850)
+    m.limits['md3'] = (500,700)
+    m.limits['mc']  = (1500,1700)
+    m.limits['tau'] = (0.2, 1.5)
+    m.limits['beta'] = (5000, 30000)
+
+    #m.limits['tau'] = (1, 100)
+    #m.limits['beta'] = (1, 100)
+    m.limits['a'] = (10, 30)
+    m.limits['b'] = (10, 25)
+    m.limits['e'] = (20, 50)
+    m.limits['g'] = (20, 60)
+
+    m.errordef=Minuit.LEAST_SQUARES
+    m.migrad()
+    return m
+
+def sample_gauss(mu, sigma):
+    return np.random.normal(mu, sigma, 10000)
+
+def random(sample):
+    return np.random.choice(sample, size=None)
+
+# arrays to store the sampled parameters
+sampled_beta,sampled_a,sampled_b,sampled_e,sampled_g = ([]),([]),([]),([]),([])
+sampled_md1,sampled_md2,sampled_md3,sampled_mc = ([]),([]),([]),([])
+sampled_tau = ([])
+
+
+# arrays to store sampled correlation coeficients
+rho_md2md1, rho_md3md1, rho_mcmd1, rho_tmd1, rho_hmd1, rho_amd1, rho_bmd1, rho_emd1, rho_gmd1   = ([]),([]),([]),([]),([]),([]),([]),([]),([]) # 9
+rho_md3md2, rho_mcmd2, rho_tmd2, rho_hmd2, rho_amd2, rho_bmd2, rho_emd2, rho_gmd2               = ([]),([]),([]),([]),([]),([]),([]),([]) # 8
+rho_mcmd3, rho_tmd3, rho_hmd3, rho_amd3, rho_bmd3, rho_emd3, rho_gmd3, rho_tmc, rho_hmc         = ([]),([]),([]),([]),([]),([]),([]),([]),([]) # 9
+rho_amc, rho_bmc, rho_emc, rho_gmc, rho_ht, rho_at, rho_bt, rho_et, rho_gt, rho_ah              = ([]),([]),([]),([]),([]),([]),([]),([]),([]),([]) # 10
+rho_bh, rho_eh, rho_gh, rho_ba, rho_ea, rho_ga, rho_eb, rho_gb, rho_ge                          = ([]),([]),([]),([]),([]),([]),([]),([]),([]) # 9
+
+
+# start bootstrap
+start = datetime.datetime.now()
+
+sigma_model = 13.63**2 # obtained with optimization (Li.Jin)
+sigma_model = 0 # obtained with optimization (Li.Jin)
+
+# gaussian pdf with the measured value and with experimental and model(sigma_model) uncertainties
+# Omega states
+gauss_2695 = sample_gauss(2695.20, np.power((1.70**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2702), PDG
+gauss_2770 = sample_gauss(2765.90, np.power((2.00**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2767), PDG
+gauss_3000 = sample_gauss(3000.41, np.power((0.22**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3015), PDG
+gauss_3050 = sample_gauss(3050.20, np.power((0.13**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3044), PDG
+gauss_3066 = sample_gauss(3065.46, np.power((0.28**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3051), PDG Excluded from the fit
+gauss_3090 = sample_gauss(3090.00, np.power((0.50**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3080), PDG Excluded from the fit
+gauss_3120 = sample_gauss(3119.10, np.power((1.00**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3140), PDG Excluded from the fit
+gauss_3185 = sample_gauss(3185.10, np.power((1.00**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3140), PDG Excluded from the fit
+# Cascades six-plet
+gauss_2578 = sample_gauss(2578.8,  np.power((0.90**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2570), PDG Average
+gauss_2645 = sample_gauss(2645.97, np.power((0.71**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2635), PDG Average
+gauss_2923 = sample_gauss(2923.04, np.power((0.35**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2934), LHCb PhysRevLett.124.222001
+gauss_2938 = sample_gauss(2938.55, np.power((0.30**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2941), LHCb PhysRevLett.124.222001
+gauss_2965 = sample_gauss(2964.88, np.power((0.33**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2969), LHCb PhysRevLett.124.222001 Excluded from the fit
+gauss_3055 = sample_gauss(3055.9,  np.power((0.40**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3060), PDG Average
+gauss_3080 = sample_gauss(3078.6,  np.power((2.80**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 3096), PDG Average
+# Sigma c
+gauss_2453 = sample_gauss(2453.5, np.power((0.90**2*0 + sigma_model), 0.5 ))   # all OK (corresponds to predicted 2453), PDG Average
+gauss_2518 = sample_gauss(2518.1, np.power((2.80**2*0 + sigma_model), 0.5 ))   # all OK (corresponds to predicted 2517), PDG Average
+gauss_2801 = sample_gauss(2800,   np.power((20.0**2*0 + sigma_model), 0.5 ))   # all OK (corresponds to predicted 2819), PDG Average
+# Lambda C
+gauss_2286 = sample_gauss(2286.46, np.power((0.14**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2283), PDG
+gauss_2592 = sample_gauss(2592.25, np.power((0.28**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2649), PDG
+gauss_2628 = sample_gauss(2628.11, np.power((0.19**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2685), PDG
+gauss_2766 = sample_gauss(2766.00, np.power((0.19**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2685), PDG
+# Cascade C anti-3-plet
+gauss_2469 = sample_gauss(2469.42, np.power((1.77**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2461), PDG Average
+gauss_2792 = sample_gauss(2793.3,  np.power((1.40**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2796), PDG Average
+gauss_2816 = sample_gauss(2818.49, np.power((2.07**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2832), PDG Average
+gauss_2970 = sample_gauss(2968.6,  np.power((3.30**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2980), PDG Average Exluded from the fit
+gauss_3050 = sample_gauss(3055.0,  np.power((1.00**2*0 + sigma_model), 0.5 ))  # all OK (corresponds to predicted 2980), PDG Average Exluded from the fit
+
+# plug here the sigma_0 optimization lines from data_utils.py
+
+# construct the simulated sampling distribution (bootstrap technique)
+for _ in range(1000): # max 10000 with decays included, computationally expensive
+    #if(states=='All'):
+    exp_m = np.array([ # measured baryon masses
+        
+        # lambda            
+        random(gauss_2286),
+        random(gauss_2592),
+        random(gauss_2628),
+        random(gauss_2766),
+
+        # cascade anti-3plet
+        random(gauss_2469),
+        # random(gauss_2792),
+        random(gauss_2816),
+        random(gauss_2970),
+        random(gauss_3050)
+    ])
+    
+    # perform the parameter fitting (via minimizing squared distance)
+    m = fit(least_squares)
+    if type(m) == None:
+        continue
+
+    sampled_md1 = np.append(sampled_md1, m.values['md1'])
+    sampled_md2 = np.append(sampled_md2, m.values['md2'])
+    sampled_md3 = np.append(sampled_md3, m.values['md3'])
+    sampled_mc  = np.append(sampled_mc,  m.values['mc'])
+
+    sampled_tau = np.append(sampled_tau, m.values['tau'])
+    sampled_beta = np.append(sampled_beta, m.values['beta'])
+    sampled_a = np.append(sampled_a, m.values['a'])
+    sampled_b = np.append(sampled_b, m.values['b'])
+    sampled_e = np.append(sampled_e, m.values['e'])
+    sampled_g = np.append(sampled_g, m.values['g'])
+
+    # correlation matrix
+    if type(m.covariance)==type(None):
+        continue
+
+    corr = m.covariance.correlation()
+
+    # h->hydrogen atom (naming)
+    rho_md2md1 = np.append(rho_md2md1, corr['md2', 'md1'])
+    rho_md3md1 = np.append(rho_md3md1, corr['md3', 'md1'])
+    rho_mcmd1  = np.append(rho_mcmd1, corr['mc',   'md1'])
+    rho_tmd1   = np.append(rho_tmd1,  corr['tau',  'md1'])
+    rho_hmd1   = np.append(rho_hmd1,  corr['beta', 'md1'])
+    rho_amd1   = np.append(rho_amd1,  corr['a',    'md1'])
+    rho_bmd1   = np.append(rho_bmd1,  corr['b',    'md1'])
+    rho_emd1   = np.append(rho_emd1,  corr['e',    'md1'])
+    rho_gmd1   = np.append(rho_gmd1,  corr['g',    'md1'])
+
+    rho_md3md2 = np.append(rho_md3md2, corr['md3', 'md2'])
+    rho_mcmd2  = np.append(rho_mcmd2,  corr['mc',  'md2'])
+    rho_tmd2   = np.append(rho_tmd2 , corr['tau',  'md2'])
+    rho_hmd2   = np.append(rho_hmd2 , corr['beta', 'md2'])
+    rho_amd2   = np.append(rho_amd2 , corr['a',    'md2'])
+    rho_bmd2   = np.append(rho_bmd2 , corr['b',    'md2'])
+    rho_emd2   = np.append(rho_emd2 , corr['e',    'md2'])
+    rho_gmd2   = np.append(rho_gmd2 , corr['g',    'md2'])
+
+    rho_mcmd3  = np.append(rho_mcmd3,corr['mc',    'md3'])
+    rho_tmd3   = np.append(rho_tmd3, corr['tau',   'md3'])
+    rho_hmd3   = np.append(rho_hmd3, corr['beta',  'md3'])
+    rho_amd3   = np.append(rho_amd3, corr['a',     'md3'])
+    rho_bmd3   = np.append(rho_bmd3, corr['b',     'md3'])
+    rho_emd3   = np.append(rho_emd3, corr['e',     'md3'])
+    rho_gmd3   = np.append(rho_gmd3, corr['g',     'md3'])
+
+    rho_tmc    = np.append(rho_tmc, corr['tau',     'mc'])
+    rho_hmc    = np.append(rho_hmc, corr['beta',    'mc'])
+    rho_amc    = np.append(rho_amc, corr['a',       'mc'])
+    rho_bmc    = np.append(rho_bmc, corr['b',       'mc'])
+    rho_emc    = np.append(rho_emc, corr['e',       'mc'])
+    rho_gmc    = np.append(rho_gmc, corr['g',       'mc'])
+
+    rho_ht     = np.append(rho_ht, corr['beta',    'tau'])
+    rho_at     = np.append(rho_at, corr['a',       'tau'])
+    rho_bt     = np.append(rho_bt, corr['b',       'tau'])
+    rho_et     = np.append(rho_et, corr['e',       'tau'])
+    rho_gt     = np.append(rho_gt, corr['g',       'tau'])
+    
+    rho_ah     = np.append(rho_ah, corr['a',      'beta'])
+    rho_bh     = np.append(rho_bh, corr['b',      'beta'])
+    rho_eh     = np.append(rho_eh, corr['e',      'beta'])
+    rho_gh     = np.append(rho_gh, corr['g',      'beta'])
+
+    rho_ba     = np.append(rho_ba, corr['b','a'])
+    rho_ea     = np.append(rho_ea, corr['e','a'])
+    rho_ga     = np.append(rho_ga, corr['g','a'])
+
+    rho_eb     = np.append(rho_eb, corr['e','b'])
+    rho_gb     = np.append(rho_gb, corr['g','b'])
+    
+    rho_ge     = np.append(rho_ge, corr['g','e'])
+    
+# save bootstrap results
+df = pd.DataFrame({"Md1" : sampled_md1,"Md2" : sampled_md2,"Md3" : sampled_md3,
+                   "MC"  : sampled_mc, "TAU" : sampled_tau, "BETA":sampled_beta,
+                   "A" : sampled_a,    "B": sampled_b,    "E" : sampled_e, "G" : sampled_g})
+
+if batch_number is None:
+    df.to_csv(workpath+"/tables/bootstrap_param_diquark_"+run_baryons+".csv", index=False)
+else:
+    df.to_csv(workpath+"/batch_results_diquark/"+run_baryons+"/parameters/"+str(batch_number)+".csv", index=False)
+
+
+
+# create dictionaries
+param   = {'is_omega':param_is_omega,
+           'is_cascade':param_is_cascade, 'is_sigma':param_is_sigma,'U':param_u, 'V':param_v, 'W':param_w, 'X':param_x, 'Y':param_y, 'Z':param_z}
+
+sampled = {'sampled_md1':sampled_md1,'sampled_md2':sampled_md2,'sampled_md3':sampled_md3,'sampled_mc':sampled_mc,
+           'sampled_tau':sampled_tau,'sampled_beta':sampled_beta,
+           'sampled_a':sampled_a, 'sampled_b':sampled_b, 'sampled_e':sampled_e, 'sampled_g':sampled_g}
+
+corr_mat_diquark ={
+
+'rho_md2md1':rho_md2md1, 'rho_md3md1':rho_md3md1, 'rho_mcmd1':rho_mcmd1, 'rho_tmd1':rho_tmd1, 'rho_hmd1':rho_hmd1, 'rho_amd1':rho_amd1, 'rho_bmd1':rho_bmd1, 'rho_emd1':rho_emd1, 'rho_gmd1':rho_gmd1,
+'rho_md3md2':rho_md3md2, 'rho_mcmd2':rho_mcmd2, 'rho_tmd2':rho_tmd2, 'rho_hmd2':rho_hmd2, 'rho_amd2':rho_amd2, 'rho_bmd2':rho_bmd2, 'rho_emd2':rho_emd2, 'rho_gmd2':rho_gmd2, 'rho_mcmd3':rho_mcmd3, 'rho_tmd3':rho_tmd3,
+'rho_hmd3':rho_hmd3,'rho_amd3': rho_amd3,'rho_bmd3':rho_bmd3,'rho_emd3':rho_emd3,'rho_gmd3':rho_gmd3,'rho_tmc':rho_tmc,'rho_hmc':rho_hmc,'rho_amc':rho_amc,'rho_bmc':rho_bmc,'rho_emc':rho_emc,'rho_gmc':rho_gmc,'rho_ht':rho_ht,
+'rho_at':rho_at,'rho_bt':rho_bt,'rho_et':rho_et,'rho_gt':rho_gt,'rho_ah':rho_ah,'rho_bh':rho_bh,'rho_eh':rho_eh,'rho_gh':rho_gh,'rho_ba':rho_ba,'rho_ea':rho_ea,'rho_ga':rho_ga,'rho_eb':rho_eb,'rho_gb':rho_gb,'rho_ge':rho_ge
+}
+
+
+
+# save bootstrap correlation parameters
+df = pd.DataFrame(corr_mat_diquark)
+if batch_number is None:
+    if not os.path.exists(workpath+"/tables/"):
+        os.mkdir(workpath+"/tables/")
+    df.to_csv(workpath+"/tables/bootstrap_correlation_diquark_"+run_baryons+".csv", index=False)
+else:
+    if not os.path.exists(workpath+"/batch_results_diquark/"+run_baryons+"/correlation/"):
+        os.mkdir(workpath+"/batch_results_diquark/"+run_baryons+"/correlation/")
+    df.to_csv(workpath+"/batch_results_diquark/"+run_baryons+"/correlation/"+str(batch_number)+".csv", index=False)
+
+    
+# calculate the results using bootstrap simulation above
+results = CharmDiquark(baryons=run_baryons, params=param, sampled=sampled, corr_mat=corr_mat_diquark, asymmetric=asymmetric, batch_number=batch_number, workpath=workpath)
+results.fetch_values()
+results.paper_results_predictions(bootstrap=bootstrap, bootstrap_width=bootstrap_width, prev_params=prev_params, decay_width=decay_width)
+
+
+print(np.mean(sampled_md1 ))
+print(np.mean(sampled_md2  ))
+print(np.mean(sampled_md3  ))
+print(np.mean(sampled_mc  ))
+
+print(np.mean(sampled_tau ), "tau")
+print(np.mean(sampled_beta ), "beta")
+print(np.mean(sampled_a ))
+print(np.mean(sampled_b )) 
+print(np.mean(sampled_e )) 
+print(np.mean(sampled_g ))
