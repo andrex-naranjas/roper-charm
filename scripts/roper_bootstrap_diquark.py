@@ -76,19 +76,19 @@ def least_squares(md1, md2, md3, mc, tau, beta, a, b, e, g):
 
 def fit(least_squares):
     m = Minuit(least_squares, md1=900, md2=300, md3=250, mc=1400, tau=0, beta=0, a=0, b=0, e=0, g=0)
-    m.limits['md1'] = (850,2000)
-    m.limits['md2'] = (650,850)
-    m.limits['md3'] = (500,700)
-    m.limits['mc']  = (1500,1700)
+    m.limits['md1'] = (850,2000) # omega
+    m.limits['md2'] = (700, 1200)  # cascade
+    # m.limits['md3'] = (500,700) # sigma/lambda
+    m.limits['mc']  = (1200,1700)
     m.limits['tau'] = (0.2, 1.5)
     m.limits['beta'] = (5000, 30000)
 
     #m.limits['tau'] = (1, 100)
     #m.limits['beta'] = (1, 100)
-    m.limits['a'] = (10, 30)
-    m.limits['b'] = (10, 25)
-    m.limits['e'] = (20, 50)
-    m.limits['g'] = (20, 60)
+    m.limits['a'] = (23, 25)#(10, 50)
+    m.limits['b'] = (17, 19)#(20, 25)
+    m.limits['e'] = (42, 46)#(20, 50)
+    m.limits['g'] = (51, 53)#(20, 60)
 
     m.errordef=Minuit.LEAST_SQUARES
     m.migrad()
@@ -162,15 +162,15 @@ for _ in range(n_events): # max 10000 with decays included, computationally expe
     exp_m = np.array([ # measured baryon masses
         
         # lambda            
-        random(gauss_2286),
+        # random(gauss_2286),
         random(gauss_2592),
         random(gauss_2628),
         random(gauss_2766),
 
         # cascade anti-3plet
         random(gauss_2469),
-        # random(gauss_2792),
-        random(gauss_2816),
+        random(gauss_2792),        
+        random(gauss_2816), # this out alone, helps
         random(gauss_2970),
         # random(gauss_3050)
     ])
@@ -301,14 +301,15 @@ results.fetch_values()
 results.paper_results_predictions(bootstrap=bootstrap, bootstrap_width=bootstrap_width, prev_params=prev_params, decay_width=decay_width)
 
 
-print(np.mean(sampled_md1 ))
-print(np.mean(sampled_md2  ))
-print(np.mean(sampled_md3  ))
-print(np.mean(sampled_mc  ))
+print(round(sampled_md1.mean()), "md1" )
+print(round(sampled_md2.mean()), "md2" )
+print(round(sampled_md3.mean()), "md3" )
+print(round(sampled_mc.mean()),  "mc")
 
 print(np.mean(sampled_tau ), "tau")
 print(np.mean(sampled_beta ), "beta")
-print(np.mean(sampled_a ))
-print(np.mean(sampled_b )) 
-print(np.mean(sampled_e )) 
-print(np.mean(sampled_g ))
+
+print("A", round(sampled_a.mean()), " PS " )
+print("B", round(sampled_b.mean()), " PSL ")
+print("E", round(sampled_e.mean()), " PI  ")
+print("G", round(sampled_g.mean()), " PF " )
