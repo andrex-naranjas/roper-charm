@@ -79,9 +79,13 @@ def fit(least_squares):
     m.limits['md1'] = (850,2000) # omega
     m.limits['md2'] = (700, 1200)  # cascade
     # m.limits['md3'] = (500,700) # sigma/lambda
-    m.limits['mc']  = (1200,1700)
+    m.limits['mc']  =  (1200,1700)
+    
     m.limits['tau'] = (0.2, 1.5)
     m.limits['beta'] = (5000, 30000)
+
+    #m.limits['tau'] = (0.19, 0.21)
+    #m.limits['beta'] = (11900, 11902)
 
     #m.limits['tau'] = (1, 100)
     #m.limits['beta'] = (1, 100)
@@ -160,6 +164,14 @@ gauss_3050 = sample_gauss(3055.0,  np.power((1.00**2*0 + sigma_model), 0.5 ))  #
 for _ in range(n_events): # max 10000 with decays included, computationally expensive
     #if(states=='All'):
     exp_m = np.array([ # measured baryon masses
+
+        # cascades sextet
+        # random(gauss_2578), # ground state
+        # random(gauss_2645), # star
+        # random(gauss_2923), # p-wave
+        # random(gauss_2938), # p-wave
+        # random(gauss_2965)  # p-wave
+        
         
         # lambda            
         # random(gauss_2286),
@@ -171,7 +183,7 @@ for _ in range(n_events): # max 10000 with decays included, computationally expe
         random(gauss_2469),
         random(gauss_2792),        
         random(gauss_2816), # this out alone, helps
-        random(gauss_2970),
+        random(gauss_2970)
         # random(gauss_3050)
     ])
     
@@ -296,7 +308,8 @@ else:
 
     
 # calculate the results using bootstrap simulation above
-results = CharmDiquark(baryons=run_baryons, params=param, sampled=sampled, corr_mat=corr_mat_diquark, asymmetric=asymmetric, batch_number=batch_number, workpath=workpath)
+results = CharmDiquark(baryons=run_baryons, params=param, sampled=sampled, corr_mat=corr_mat_diquark, asymmetric=asymmetric, decay_width=decay_width,
+                       bootstrap_width=bootstrap_width, batch_number=batch_number, workpath=workpath)
 results.fetch_values()
 results.paper_results_predictions(bootstrap=bootstrap, bootstrap_width=bootstrap_width, prev_params=prev_params, decay_width=decay_width)
 

@@ -103,15 +103,15 @@ def states_mass_diquark(baryons):
         # lam =1 , rho=2, rpl=3, rpr=4, mix = 5
         # cascade states 6-plet
     elif(baryons=='cascades'):
-        state    = np.array(['cas','cas','cas','cas','cas','cas','cas','cas','cas','cas','cas','cas','cas','cas','cas'])
-        J_tot    = np.array([  1/2,  3/2,  1/2,  1/2,  3/2,  3/2,  5/2,  3/2,  5/2,  1/2,  3/2,  5/2,  7/2,  1/2,  3/2])
-        S_tot    = np.array([  1/2,  3/2,  1/2,  3/2,  1/2,  3/2,  3/2,  1/2,  1/2,  3/2,  3/2,  3/2,  3/2,  1/2,  3/2])
-        L_tot    = np.array([    0,    0,    1,    1,    1,    1,    1,    2,    2,    2,    2,    2,    2,    0,    0])
-        I_tot    = np.array([  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2])
-        SU_tot   = np.array([ 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3])
-        HO_n     = np.array([    0,    0,    1,    1,    1,    1,    1,    2,    2,    2,    2,    2,    2,    2,    2])
-        SL       = np.array([    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1])
-        ModEx    = np.array(['grd','grd','lam','lam','lam','lam','lam','lam','lam','lam','lam','lam','lam','rpl','rpl'])
+        state    = np.array(['cas','cas','cas','cas','cas','cas','cas','cas'])
+        J_tot    = np.array([  1/2,  3/2,  1/2,  1/2,  3/2,  3/2,  5/2,  1/2])
+        S_tot    = np.array([  1/2,  3/2,  1/2,  3/2,  1/2,  3/2,  3/2,  1/2])
+        L_tot    = np.array([    0,    0,    1,    1,    1,    1,    1,    0])
+        I_tot    = np.array([  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2,  1/2])
+        SU_tot   = np.array([ 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3])
+        HO_n     = np.array([    1,    1,    2,    2,    2,    2,    2,    2])
+        SL       = np.array([    1,    1,    1,    1,    1,    1,    1,    1])
+        ModEx    = np.array(['grd','grd','lam','lam','lam','lam','lam','lam'])
         # sigma states
     elif(baryons=='sigmas'):
         state    = np.array(['sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig'])

@@ -41,7 +41,7 @@ class decay(object):
         baryon = ctypes.c_int(baryon)
         excMode = ctypes.c_int(excMode)
         prodDecay = ctypes.c_int(prodDecay)
-        m_lib = ctypes.CDLL(os.path.join(self.workpath+"/DecayWidths", 'libbottomdecay.so'))
+        m_lib = ctypes.CDLL(os.path.join(self.workpath+"/DecayWidths", 'libcharmdecay.so'))
         m_lib.bottom_execute.restype = ctypes.c_double
         m_lib.bottom_execute.argtypes = [ctypes.c_double]
         decay_value = m_lib.bottom_execute(MA_avg_val, MB_avg_val, MC_avg_val, MA_val, MB_val, MC_val,

@@ -7,7 +7,7 @@ CC = g++ -v
 CFLAGS = -g -ansi -pedantic -W -Wall -Wextra -std=c++11 -m64 -fPIC #-std=c++17
 LDFLAGS= -shared
 
-TARGET = libbottomdecay.so
+TARGET = libcharmdecay.so
 
 SRC = $(wildcard src/*.cxx)
 

@@ -28,7 +28,7 @@ class DecayWidths:
     def load_average_mass(self, mass_avg=0):
         self.MassA_avg = mass_avg/1000.0 # central value of the bootstrap distribution
         
-    def total_decay_width(self, baryons, k_prim, massA, SA_val, L_val, JA_val, SL_val, ModEx_val, bootstrap=False, gamma_val=None, m1=0, m2=0, m3=0):
+    def total_decay_width(self, baryons, tau, massA, SA_val, L_val, JA_val, SL_val, ModEx_val, bootstrap=False, gamma_val=None, md1=0, md2=0, md3=0, mc=0):
         """
         Method that calls the wrapper and sums the individual decay widths
         """
@@ -41,11 +41,12 @@ class DecayWidths:
         baryon= self.baryon_flag(baryons)
         ModEx = self.ModEx_flag(ModEx_val)
         nChannels = self.n_channels(baryons)
-        m_lam, m_rho = self.reduced_masses(baryons, m1, m2, m3)
+        m_mu = self.reduced_masses(baryons, md1, md2, md3, mc)
         channel_widths = ([])
         
-        alpha_lam = self.alphas(k_prim, m_lam)
-        alpha_rho = self.alphas(k_prim, m_rho)
+        alpha_lam = self.alphas(tau, m_mu)
+        print(alpha_lam)
+        alpha_rho = 1
 
         if gamma_val is None:
             gamma = self.gamma_fitted(bootstrap)
@@ -119,30 +120,26 @@ class DecayWidths:
         elif(baryons=='lambdas'):        return 3+10+1
         elif(baryons=='cascades_anti3'): return 7+17+4        
         
-    def reduced_masses(self, baryons, m1_input, m2_input, m3_input):
+    def reduced_masses(self, baryons, m1_input, m2_input, m3_input, mc_input):
         """
         Method to calculate reduced masses of the harmonic oscillator
         """
-        m_lam,m_rho=0,0
+        m_mu=0
         if(baryons=='omegas'):
-            m_rho = m2_input
-            m_lam = (3*m2_input*m1_input)/(2*m2_input+m1_input)
+            m_mu = (m1_input*mc_input)/(m1_input+mc_input)
         elif(baryons=='cascades' or baryons =='cascades_anti3'):
-            m_rho = (m2_input+m3_input)/2
-            m_lam = (1.5*(m2_input+m3_input)*m1_input)/(m1_input+m2_input+m3_input)
+            m_mu = (m2_input*mc_input)/(m2_input+mc_input)
         elif(baryons=='sigmas' or baryons=='lambdas'):
-             m_rho = m3_input
-             m_lam = (3*m3_input*m1_input)/(2*m3_input+m1_input)
+            m_mu = (m3_input*mc_input)/(m3_input+mc_input)
              
-        return m_lam,m_rho
+        return m_mu
                     
-    def alphas(self, k_prim, m_lam_rho):
+    def alphas(self, tau, m_mu):
         """
         Method to calculate the decay alphas
         """
-        value1 = (np.sqrt(3./m_lam_rho)) * k_prim
-        value2 = value1*m_lam_rho
-        return np.sqrt(value2)/1000. # transform from GeV -> MeV
+        value = (4*m_mu*tau)/(3*pow(np.pi, 0.5))
+        return pow(value/1000., -1) # transform from GeV -> MeV
             
     def decay_masses(self, bootstrap, baryons, decPr):
         """
@@ -531,6 +528,18 @@ class DecayWidths:
         self.Bs_mass          = 5.36692 # +- 0.00010
         self.B_star_mass      = 5.32471 # +- 0.00021
 
+
+        # Charm baryons
+        self.lambda_mass      = 2.28646
+        self.xi_mass          = 2.46908
+        self.xi_p_mass        = 2.57850
+        self.xi_s_mass        = 2.64563
+        self.sigma_mass       = 2.45350
+        self.sigma_s_mass     = 2.51813
+        self.omega_mass       = 2.69520
+        self.omega_s_mass     = 2.76590
+        
+
         if(bootstrap):
             self.gauss_pion        = np.random.normal(0.13725, 0.00295, 10000)
             self.gauss_kaon        = np.random.normal(0.49564, 0.00279, 10000)
@@ -564,6 +573,17 @@ class DecayWidths:
             self.gauss_B0          = np.random.normal(5.27966, 0.00012, 10000)
             self.gauss_Bs          = np.random.normal(5.36692, 0.00010, 10000)
             self.gauss_B_star      = np.random.normal(5.32471, 0.00021, 10000)
+
+
+            # Charm baryons
+            self.gauss_lambda      = np.random.normal(2.28646, 0.00014, 10000)
+            self.gauss_xi          = np.random.normal(2.46908, 0.00158, 10000)
+            self.gauss_xi_p        = np.random.normal(2.57850, 0.00100, 10000)
+            self.gauss_xi_s        = np.random.normal(2.64563, 0.00100, 10000)
+            self.gauss_sigma       = np.random.normal(2.45350, 0.00090, 10000)
+            self.gauss_sigma_s     = np.random.normal(2.51813, 0.00280, 10000)
+            self.gauss_omega       = np.random.normal(2.69520, 0.00170, 10000)
+            self.gauss_omega_s     = np.random.normal(2.76590, 0.00200, 10000)
 
             
     def set_gamma_val(self, bootstrap):
