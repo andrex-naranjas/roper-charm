@@ -1,6 +1,6 @@
 """
 ---------------------------------------------------------------
- Authors: A. Ramirez-Morales (andres.ramirez.morales@cern.ch)
+ Authors: A. Ramirez-Morales (andres.ramirez@fisica.uaz.edu.mx)
           H. Garcia-Tecocoatzi
 ---------------------------------------------------------------
 """
