@@ -68,14 +68,27 @@ def fetch_data_diquark(fit_type="trad"):
     param_y          = np.array([  0.00, 0.00, 0.00,   0.75,  0.75,   0.75, 0.75]) # coef infront Iso        0.00, 0.00,
     param_z          = np.array([  4/3 , 4/3 , 4/3 ,   4/3 ,  4/3 ,   4/3 , 4/3 ]) # coef infront Flavor        4/3 , 4/3 ,
 
-
-    #param_u          = np.array([ 1.00, 1.00,  0.25,   0.25,  0.25]) # coef infront 4 and 4  # cascades sextet
-    #param_v          = np.array([ 3.00, 3.00,  10.0,   10.0,  10.0]) # coef infront
+    #param_u          = np.array([ 1.00, 1.00,  0.25,   0.25,  0.25]) # coef infront   4 and 4  # cascades sextet
+    #param_v          = np.array([ 3.00, 3.00,  10.0,   10.0,  10.0]) # coef infront            # cascade sextet
     #param_w          = np.array([ 0.75, 3.75,  3.75,   0.75,  3.75]) # coef infront PS        # cascades sextet
     #param_x          = np.array([ 0.00, 0.00,  -2.5,   0.50,  -1.0]) # coef infront PSL        # cascades sextet
     #param_y          = np.array([ 0.75, 0.75,  0.75,   0.75,  0.75]) # coef infront Iso         # cascades sextet
     #param_z          = np.array([ 10/3, 10/3,  10/3,   10/3,  10/3]) # coef infront Flavor       # cascades sextet
 
+    param_u          = np.array([  1.00, 1.00,  0.25,   0.25,  0.25,       1.00,  0.25,   0.25, 0.25]) # coef infront 4 and 4
+    param_v          = np.array([  3.00, 3.00,  10.0,   10.0,  10.0,       3.00,  10.0,   10.0, 12.0]) # coef infront
+    param_w          = np.array([  0.75, 3.75,  3.75,   0.75,  3.75,       0.75,  0.75,   0.75, 0.75]) # coef infront PS         0.75, 0.75,
+    param_x          = np.array([  0.00, 0.00,  -2.5,   0.50,  -1.0,       0.00,  -1.0,   0.50, 0.00]) # coef infront PSL        -1.5, 1.00,
+    param_y          = np.array([  0.75, 0.75,  0.75,   0.75,  0.75,       0.75,  0.75,   0.75, 0.75]) # coef infront Iso        0.00, 0.00,
+    param_z          = np.array([  10/3, 10/3,  10/3,   10/3,  10/3,       4/3 ,  4/3 ,   4/3 , 4/3 ]) # coef infront Flavor        4/3 , 4/3 ,
+
+    param_u          = np.array([  1.00, 1.00,  0.25,   0.25,  0.25,       1.00,  0.25,    0.25]) # coef infront 4 and 4
+    param_v          = np.array([  3.00, 3.00,  10.0,   10.0,  10.0,       3.00,  10.0,    12.0]) # coef infront
+    param_w          = np.array([  0.75, 3.75,  3.75,   0.75,  3.75,       0.75,  0.75,    0.75]) # coef infront PS         0.75, 0.75,
+    param_x          = np.array([  0.00, 0.00,  -2.5,   0.50,  -1.0,       0.00,  -1.0,    0.00]) # coef infront PSL        -1.5, 1.00,
+    param_y          = np.array([  0.75, 0.75,  0.75,   0.75,  0.75,       0.75,  0.75,    0.75]) # coef infront Iso        0.00, 0.00,
+    param_z          = np.array([  10/3, 10/3,  10/3,   10/3,  10/3,       4/3 ,  4/3 ,    4/3 ]) # coef infront Flavor        4/3 , 4/3 ,
+    
 
     # kind of baryon
     if fit_type=="trad":
@@ -90,11 +103,14 @@ def fetch_data_diquark(fit_type="trad"):
         param_is_omega   = np.array([  0.00, 0.00, 0.00,  0.00, 0.00, 0.00, 0.00]) # coef kp 4 and 4
         param_is_cascade = np.array([  0.00, 0.00, 0.00,  1.00, 1.00, 1.00, 1.00]) # coef kp
         param_is_sigma   = np.array([  1.00, 1.00, 1.00,  0.00, 0.00, 0.00, 0.00]) # coef kp
-
         
-        # param_is_omega   = np.array([0.00, 0.00, 0.00, 0.00, 0.00]) # coef kp 4 and 4
-        # param_is_cascade = np.array([1.00, 1.00, 1.00, 1.00, 1.00]) # coef kp
-        # param_is_sigma   = np.array([0.00, 0.00, 0.00, 0.00, 0.00]) # coef kp
+        # param_is_omega   = np.array([  0.00, 0.00, 0.00,  0.00, 0.00, 0.00, 0.00, 0.00, 0.00]) # coef kp 4 and 4
+        # param_is_cascade = np.array([  1.00, 1.00, 1.00,  1.00, 1.00, 1.00, 1.00, 1.00, 1.00]) # coef kp
+        # param_is_sigma   = np.array([  0.00, 0.00, 0.00,  0.00, 0.00, 0.00, 0.00, 0.00, 0.00]) # coef kp
+
+        param_is_omega   = np.array([  0.00, 0.00, 0.00,  0.00, 0.00, 0.00, 0.00,  0.00]) # coef kp 4 and 4
+        param_is_cascade = np.array([  1.00, 1.00, 1.00,  1.00, 1.00, 1.00, 1.00,  1.00]) # coef kp
+        param_is_sigma   = np.array([  0.00, 0.00, 0.00,  0.00, 0.00, 0.00, 0.00,  0.00]) # coef kp
 
         return param_u, param_v,param_w,param_x,param_y,param_z,param_is_omega,param_is_cascade,param_is_sigma
 
