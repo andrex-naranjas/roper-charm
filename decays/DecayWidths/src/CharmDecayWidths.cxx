@@ -1,6 +1,6 @@
-//BottomDecay Class includes
-#ifndef BOTTOMDECAYWIDTHS_CXX
-#define BOTTOMDECAYWIDTHS_CXX
+//CharmDecay Class includes
+#ifndef CHARMDECAYWIDTHS_CXX
+#define CHARMDECAYWIDTHS_CXX
 
 #include "CharmDecayWidths.h"
 #include "WignerSymbols.h"
@@ -13,19 +13,20 @@
 //#include <complex>
 
 
-BottomDecayWidths::BottomDecayWidths()
+CharmDecayWidths::CharmDecayWidths()
 {
 }
 
-BottomDecayWidths::~BottomDecayWidths(){}
+CharmDecayWidths::~CharmDecayWidths(){}
 
-double BottomDecayWidths::execute(double ma_avg_val, double mb_avg_val, double mc_avg_val, double ma_val, double mb_val, double mc_val,
+double CharmDecayWidths::execute(double ma_avg_val, double mb_avg_val, double mc_avg_val, double ma_val, double mb_val, double mc_val,
 				  double ga_val, double sa_val,
 				  double la_val, double ja_val, double sl_val, double al_val, double ar_val,
 				  int baryon, int excMode, int prodDecay){  
 
   // if(ma_avg_val<mb_avg_val+mc_avg_val) return 0.; //energy conservation
   // decay product masses
+  return 10; //test
   MA = ma_val;
   MB = mb_val;
   MC = mc_val;
@@ -184,18 +185,18 @@ double BottomDecayWidths::execute(double ma_avg_val, double mb_avg_val, double m
   return decayWidth;
 }
 
-double BottomDecayWidths::DecayWidth(double flav_coup, double gamma, double fi2_value, double angular_sum_value){
+double CharmDecayWidths::DecayWidth(double flav_coup, double gamma, double fi2_value, double angular_sum_value){
   double GeV = 1000.;
   double decayWidth = flav_coup * std::pow(gamma, 2) * fi2_value * (1./(2*JA + 1)) * angular_sum_value;
   return decayWidth*GeV;
 }
 
-double BottomDecayWidths::ALPHA_MES(int diagram){
+double CharmDecayWidths::ALPHA_MES(int diagram){
   if(diagram == 1) return 0.46;
   else return 0.6;
 }
 
-double BottomDecayWidths::ANGULAR_SUM(double alpha_rho, double alpha_lam,
+double CharmDecayWidths::ANGULAR_SUM(double alpha_rho, double alpha_lam,
  				     double alpha_mes, double k_value){
   
   WignerSymbols *m_wigner = new WignerSymbols();
@@ -301,7 +302,7 @@ double BottomDecayWidths::ANGULAR_SUM(double alpha_rho, double alpha_lam,
   return outerSum;
 }
 
-double BottomDecayWidths::ANGULAR_SUM_SECOND(double alpha_rho, double alpha_lam,
+double CharmDecayWidths::ANGULAR_SUM_SECOND(double alpha_rho, double alpha_lam,
 					    double alpha_mes, double k_value){
   
   if(modeExcitation == 0 ||  // GROUND, RADIAL RHO do not contribute
@@ -437,7 +438,7 @@ double BottomDecayWidths::ANGULAR_SUM_SECOND(double alpha_rho, double alpha_lam,
   return outerSum;
 }
 
-std::vector<double> BottomDecayWidths::getMomentumProjections(double j_angular){
+std::vector<double> CharmDecayWidths::getMomentumProjections(double j_angular){
   //gets the m projections "m_projection" for a given angular momentum "j_angular"
   std::vector<double> angularProjections; angularProjections.clear();
   if(j_angular==0.){ angularProjections.push_back(0); return angularProjections;}
@@ -451,39 +452,39 @@ std::vector<double> BottomDecayWidths::getMomentumProjections(double j_angular){
   return angularProjections;
 }
 
-int BottomDecayWidths::KroneckerDelta(double i, double j){
+int CharmDecayWidths::KroneckerDelta(double i, double j){
   if(i==j) return 1;
   else return 0;
 }
 
-double BottomDecayWidths::EWCC(double MA, double MB, double MC){
+double CharmDecayWidths::EWCC(double MA, double MB, double MC){
   double value = (0.5*(std::pow(MA,2) + std::pow(MC,2) - std::pow(MB,2)) )/ MA;
   return value;
 }
 
-double BottomDecayWidths::EB(double MA, double MB, double MC){
+double CharmDecayWidths::EB(double MA, double MB, double MC){
   double value = ( 0.5*(std::pow(MA,2) - std::pow(MC,2) + std::pow(MB,2)) )/ MA;
   return value;
 }
 
-double BottomDecayWidths::K(double EB, double MB){
+double CharmDecayWidths::K(double EB, double MB){
   double value = std::sqrt( std::pow(EB,2) - std::pow(MB,2) );
   return value;
 }
 
-double BottomDecayWidths::FI2(double EB, double EWCC, double MA, double k_value){
+double CharmDecayWidths::FI2(double EB, double EWCC, double MA, double k_value){
   double value = (2*(pi_val)*k_value*(EB * EWCC)) / MA ; 
   return value;
 }
 
-double BottomDecayWidths::CBARIN(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARIN(double alpha_rho, double alpha_lam){
   double value1 = std::pow(3,0.75);
   double value2 = std::pow(1.0/( pi_val * std::pow(alpha_rho, 2) ), 0.75);
   double value3 = std::pow(1.0/( pi_val * std::pow(alpha_lam, 2) ), 0.75);
   return value1 * value2 * value3 ;
 }
 
-double BottomDecayWidths::CMESON(double alpha_mes){
+double CharmDecayWidths::CMESON(double alpha_mes){
   double value = std::pow(1.0/( pi_val * std::pow(alpha_mes, 2) ), 0.75);
   return value;
 }
@@ -491,24 +492,24 @@ double BottomDecayWidths::CMESON(double alpha_mes){
 //GROUND STATES
 //CBARIN_GROUND --> same as P-wave (CBARIN)
 //CMESON_GROUND --> same as P-wave (CMESON)
-double BottomDecayWidths::C0_GROUND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_GROUND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3*std::pow(3,0.5));
   double value2 = CBARIN(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_GROUND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO0_GROUND(double alpha_lam, double alpha_mes){
   double value1 = 1./std::pow(alpha_lam,2);
   double value2 = 1./(12.*std::pow(alpha_mes,2));
   return std::pow(value1+value2,0.5);
 }
 
-double BottomDecayWidths::F0_GROUND(double alpha_rho, double alpha_lam, double k_value){
+double CharmDecayWidths::F0_GROUND(double alpha_rho, double alpha_lam, double k_value){
   double value1 = (-1./3.)/(alpha_rho*alpha_lam);
   return k_value*k_value*value1;
 }
 
-double BottomDecayWidths::F01_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F01_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1./(2*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);  
   double value1pp = value1p*value1p;
   double value1ppp= 1./std::pow(ARO0_GROUND(alpha_lam, alpha_mes),2);
@@ -517,7 +518,7 @@ double BottomDecayWidths::F01_GROUND(double alpha_rho, double alpha_lam, double 
   return k_value*k_value*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1./(2*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);  
   double value1pp= 1./std::pow(ARO0_GROUND(alpha_lam, alpha_mes),2);
   double value1 = (std::pow(2./3.,0.5))*value1p*value1pp;
@@ -525,13 +526,13 @@ double BottomDecayWidths::BRO2_GROUND(double alpha_rho, double alpha_lam, double
   return k_value*(value1-value2);  
 }
 
-double BottomDecayWidths::ARO1_GROUND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_GROUND(double alpha_lam, double alpha_mes){
   double value1 = std::pow(2,0.5);
   double value2 = (std::pow(2./3.,0.5))/(4 * std::pow(3,0.5) * std::pow(ARO0_GROUND(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return -value1+value2;
 }
 
-double BottomDecayWidths::ARO2_GROUND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_GROUND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4./std::pow(alpha_rho,2);
   double value1pp = 1./std::pow(alpha_mes,2);
   double value1   = 0.25*(value1p + value1pp);
@@ -539,7 +540,7 @@ double BottomDecayWidths::ARO2_GROUND(double alpha_rho, double alpha_lam, double
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(2,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(2,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_GROUND(alpha_lam, alpha_mes), 2) );
@@ -548,7 +549,7 @@ double BottomDecayWidths::BRO1_GROUND(double alpha_rho, double alpha_lam, double
   return (-1.0)*(value1 + value2 + value3);
 }
 
-double BottomDecayWidths::F0TOT_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::F0TOT_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1 = F01_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_GROUND(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);  
@@ -556,7 +557,7 @@ double BottomDecayWidths::F0TOT_GROUND(double alpha_rho, double alpha_lam, doubl
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1   = C0_GROUND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_GROUND(alpha_lam, alpha_mes), 3) );
   double value2p  = BRO1_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_GROUND(alpha_rho, alpha_lam, alpha_mes), 2);
   double value2   = value2p*ARO1_GROUND(alpha_lam, alpha_mes) + BRO2_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value);
@@ -564,39 +565,39 @@ double BottomDecayWidths::I01B0_GROUND(double alpha_rho, double alpha_lam, doubl
   return value1*value2*value3*std::pow(pi_val,2.5);
 }
 
-double BottomDecayWidths::I01B0TOT_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_GROUND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
 //P-WAVE-LAMBDA STATES
-double BottomDecayWidths::CBARFIN_PWAVE(double alpha_rho, double alpha_lam){//backup
+double CharmDecayWidths::CBARFIN_PWAVE(double alpha_rho, double alpha_lam){//backup
   double value1 = std::pow(3,0.75) * std::pow( 8.0/(3.0*std::pow(pi_val, 0.5)), 0.5);
   double value2 = std::pow(1.0/( std::pow(alpha_lam, 2) ), 1.25);
   double value3 = std::pow(1.0/( pi_val * std::pow(alpha_rho, 2) ), 0.75);
   return value1 * value2 * value3;// * mycomplex;//define complex if needed
 }
 
-double BottomDecayWidths::C0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3*std::pow(3,0.5));
   double value2 = CBARFIN_PWAVE(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_PWAVE(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO0_PWAVE(double alpha_rho, double alpha_mes){
   double value1 = (1.0/1.0) * (1./std::pow(alpha_rho,2));
   double value2 = (1.0/4.0) * (1./std::pow(alpha_mes,2));
   return std::pow(value1+value2, 0.5);
 }
 
-double BottomDecayWidths::F0_PWAVE(double alpha_rho, double alpha_lam, double k_value){
+double CharmDecayWidths::F0_PWAVE(double alpha_rho, double alpha_lam, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 =1./(alpha_rho*alpha_lam);
   return (-1./3.)*(value1*value2);  
 }
 
-double BottomDecayWidths::F01_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F01_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1.0/(2.0*std::pow(2,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(2,0.5)*alpha_mes*alpha_mes);
   double value1pp = value1p*value1p;
   double value1ppp= 1./(std::pow(ARO0_PWAVE(alpha_rho, alpha_mes),2));  
@@ -605,19 +606,19 @@ double BottomDecayWidths::F01_PWAVE(double alpha_rho, double alpha_lam, double a
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*alpha_lam*alpha_rho) + 1.0/(4.0*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_PWAVE(alpha_rho, alpha_mes),2));
   return k_value*(value1*value2 - 2.0);
 }
 
-double BottomDecayWidths::ARO1_PWAVE(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO1_PWAVE(double alpha_rho, double alpha_mes){
   double value1 = std::pow(2./3.,0.5);
   double value2 = 1./(2.0 * std::pow(6,0.5) * std::pow(ARO0_PWAVE(alpha_rho, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value1 - value2;
 }
 
-double BottomDecayWidths::ARO2_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_lam,2));
   double value1pp = 1.0/(3.0*std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -625,7 +626,7 @@ double BottomDecayWidths::ARO2_PWAVE(double alpha_rho, double alpha_lam, double 
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(6,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(6,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_PWAVE(alpha_rho, alpha_mes), 2) );
@@ -634,7 +635,7 @@ double BottomDecayWidths::BRO1_PWAVE(double alpha_rho, double alpha_lam, double 
   return value1 + value2 - value3;
 }
 
-double BottomDecayWidths::F0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_PWAVE(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -642,7 +643,7 @@ double BottomDecayWidths::F0TOT_PWAVE(double alpha_rho, double alpha_lam, double
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_PWAVE(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_PWAVE(alpha_rho, alpha_mes), 3) );
   double value1pp = BRO1_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_PWAVE(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1   = value1p*value1pp;
@@ -651,19 +652,19 @@ double BottomDecayWidths::I01B0_PWAVE(double alpha_rho, double alpha_lam, double
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I02B0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::I02B0_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = C0_PWAVE(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_PWAVE(alpha_rho, alpha_mes), 3) ;
   double value2 = (3. * ARO1_PWAVE(alpha_rho, alpha_mes)) / (8.* std::pow( ARO2_PWAVE(alpha_rho, alpha_lam, alpha_mes), 5));
   return value1*value2*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I01B0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_PWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_PWAVE(alpha_rho, alpha_lam, alpha_mes);
   return value1*value2;
@@ -671,26 +672,26 @@ double BottomDecayWidths::I02B0TOT_PWAVE(double alpha_rho, double alpha_lam, dou
 
 
 // P-WAVE-RHO STATES
-double BottomDecayWidths::CBARFIN_PWAVE_RHO(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_PWAVE_RHO(double alpha_rho, double alpha_lam){
   double value1 = std::pow(3,0.75) * std::pow( 8.0/(3.0*std::pow(pi_val, 0.5)), 0.5);
   double value2 = std::pow(1.0/(pi_val* std::pow(alpha_lam,2) ), 0.75);
   double value3 = std::pow(1.0/( std::pow(alpha_rho, 2) ), 1.25);
   return value1 * value2 * value3;// * mycomplex;//define complex if needed
 }
 
-double BottomDecayWidths::C0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3*std::pow(3,0.5));
   double value2 = CBARFIN_PWAVE_RHO(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_PWAVE_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO0_PWAVE_RHO(double alpha_lam, double alpha_mes){
   double value1 = 1./std::pow(alpha_lam,2);
   double value2 = 1./(12*std::pow(alpha_mes, 2));  
   return std::pow(value1+value2,0.5);
 }
 
-double BottomDecayWidths::F01_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F01_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1./(2*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);  
   double value1pp = value1p*value1p;
   double value1ppp= 1./std::pow(ARO0_PWAVE_RHO(alpha_lam, alpha_mes),2);
@@ -699,7 +700,7 @@ double BottomDecayWidths::F01_PWAVE_RHO(double alpha_rho, double alpha_lam, doub
   return k_value*k_value*(value1-value2);
 }
 
-double BottomDecayWidths::BRO1_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1./(2*alpha_lam*alpha_rho) + 1./(4*alpha_mes*alpha_mes);
   double value1pp = 1./(3*std::pow(ARO0_PWAVE_RHO(alpha_lam, alpha_mes), 2));
   double value1 = value1p * value1pp;
@@ -707,13 +708,13 @@ double BottomDecayWidths::BRO1_PWAVE_RHO(double alpha_rho, double alpha_lam, dou
   return k_value*(value1-value2);
 }
 
-double BottomDecayWidths::ARO1_PWAVE_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_PWAVE_RHO(double alpha_lam, double alpha_mes){
   double value1 = std::pow(2,0.5);
   double value2 = 1./(6 * std::pow(2,0.5) * std::pow(ARO0_PWAVE_RHO(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return -value1+value2;
 }
 
-double BottomDecayWidths::ARO2_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4./std::pow(alpha_rho,2);
   double value1pp = 1./std::pow(alpha_mes,2);
   double value1   = 0.25*(value1p + value1pp);
@@ -721,7 +722,7 @@ double BottomDecayWidths::ARO2_PWAVE_RHO(double alpha_rho, double alpha_lam, dou
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO2_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1    = k_value/(4*std::pow(2,0.5)*std::pow(alpha_mes,2));
   double value2    = k_value/(2*std::pow(2,0.5)*alpha_rho*alpha_lam);
   double value3p   = k_value/(4*std::pow(3,0.5)*std::pow(alpha_mes,2));
@@ -731,14 +732,14 @@ double BottomDecayWidths::BRO2_PWAVE_RHO(double alpha_rho, double alpha_lam, dou
   return -value1 - value2 + value3;
 }
 
-double BottomDecayWidths::F0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = std::pow(BRO2_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value)/ARO2_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 2);
   double value3 = (1./3.)*(std::pow(k_value,2)*(1./(alpha_rho*alpha_lam)));
   return value1 + value2 - value3;
 }
 
-double BottomDecayWidths::I01B0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_PWAVE_RHO(alpha_lam, alpha_mes), 3) ;
   double value1pp = BRO2_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1 = value1p*value1pp;
@@ -747,19 +748,19 @@ double BottomDecayWidths::I01B0_PWAVE_RHO(double alpha_rho, double alpha_lam, do
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I02B0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::I02B0_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = C0_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_PWAVE_RHO(alpha_lam, alpha_mes), 3);
   double value2 = (3. * ARO1_PWAVE_RHO(alpha_lam, alpha_mes) ) / (8.* std::pow(  ARO2_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 5) );
   return pi_val*pi_val*value1*value2;
 }
 
-double BottomDecayWidths::I01B0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes);
   return value1*value2;
@@ -768,7 +769,7 @@ double BottomDecayWidths::I02B0TOT_PWAVE_RHO(double alpha_rho, double alpha_lam,
 
 // D-wave excitations
 // lambda wave functions
-double BottomDecayWidths::CBARFIN_DWAVE(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_DWAVE(double alpha_rho, double alpha_lam){
   double value1 = (std::pow(3,0.75) * std::pow(16,0.5))/(std::pow(15,0.5) * (std::pow(pi_val,0.25)) );
   double value2 = std::pow(( 1.0/alpha_lam ), 3.5);
   double value3 = std::pow(1.0/( pi_val * std::pow(alpha_rho, 2) ), 0.75);
@@ -778,24 +779,24 @@ double BottomDecayWidths::CBARFIN_DWAVE(double alpha_rho, double alpha_lam){
 //CBARIN_DWAVE --> same as P-wave (CBARIN)
 //CMESON_DWAVE --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_DWAVE(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_DWAVE(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO0_DWAVE(double alpha_rho, double alpha_mes){
   double value1 = 1.0/std::pow(alpha_rho,2);  
   double value2 = 1.0/(4.0*std::pow(alpha_mes,2));
   return std::pow(value1+value2,0.5);
 }
 
-double BottomDecayWidths::F0_DWAVE(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_DWAVE(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam) ;
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::F01_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1p  = 1.0/(2.0*std::pow(2,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(2,0.5)*alpha_mes*alpha_mes);
   double value1pp = value1p*value1p;
   double value1ppp= 1./(std::pow(ARO0_DWAVE(alpha_rho, alpha_mes),2));  
@@ -804,19 +805,19 @@ double BottomDecayWidths::F01_DWAVE(double alpha_rho, double alpha_lam, double a
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*alpha_lam*alpha_rho) + 1.0/(4.0*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_DWAVE(alpha_rho, alpha_mes),2));
   return k_value*(value1*value2 - 2.0);
 }
 
-double BottomDecayWidths::ARO1_DWAVE(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO1_DWAVE(double alpha_rho, double alpha_mes){
   double value1 = std::pow(2./3.,0.5);
   double value2 = 1./(2.0 * std::pow(6,0.5) * std::pow(ARO0_DWAVE(alpha_rho, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value1 - value2;
 }
 
-double BottomDecayWidths::ARO2_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_lam,2));
   double value1pp = 1.0/(3.0*std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -824,7 +825,7 @@ double BottomDecayWidths::ARO2_DWAVE(double alpha_rho, double alpha_lam, double 
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(6,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(6,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_DWAVE(alpha_rho, alpha_mes), 2) );
@@ -833,7 +834,7 @@ double BottomDecayWidths::BRO1_DWAVE(double alpha_rho, double alpha_lam, double 
   return value1 + value2 - value3;
 }
 
-double BottomDecayWidths::F0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -841,7 +842,7 @@ double BottomDecayWidths::F0TOT_DWAVE(double alpha_rho, double alpha_lam, double
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_DWAVE(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_DWAVE(alpha_rho, alpha_mes), 3) );
   double value1pp = BRO1_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1   = value1p*std::pow(value1pp, 2);
@@ -850,20 +851,20 @@ double BottomDecayWidths::I01B0_DWAVE(double alpha_rho, double alpha_lam, double
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I02B0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_DWAVE(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_DWAVE(alpha_rho, alpha_mes), 3) ;
   double value2 = BRO1_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value) / std::pow(ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes), 2);
   double value3 = (3*std::pow(10.,0.5) * ARO1_DWAVE(alpha_rho, alpha_mes)) / (8.* std::pow( ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes), 5));
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I01B0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_DWAVE(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -871,7 +872,7 @@ double BottomDecayWidths::I02B0TOT_DWAVE(double alpha_rho, double alpha_lam, dou
 
 // D-wave excitations
 // rho wave functions
-double BottomDecayWidths::CBARFIN_DWAVE_RHO(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_DWAVE_RHO(double alpha_rho, double alpha_lam){
   double value1 = (std::pow(3,0.75) * std::pow(16,0.5))/(std::pow(15,0.5) * (std::pow(pi_val,0.25)) );
   double value2 = std::pow(( 1.0/alpha_rho ), 3.5);
   double value3 = std::pow(1.0/( pi_val * std::pow(alpha_lam, 2)  ), 0.75);
@@ -881,24 +882,24 @@ double BottomDecayWidths::CBARFIN_DWAVE_RHO(double alpha_rho, double alpha_lam){
 //CBARIN_DWAVE --> same as P-wave (CBARIN)
 //CMESON_DWAVE --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_DWAVE_RHO(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_DWAVE_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO0_DWAVE_RHO(double alpha_lam, double alpha_mes){
   double value1 = 1.0/std::pow(alpha_lam,2);  
   double value2 = 1.0/(12.0*std::pow(alpha_mes,2));
   return std::pow(value1+value2,0.5);
 }
 
-double BottomDecayWidths::F0_DWAVE_RHO(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_DWAVE_RHO(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam) ;
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::F01_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1p  = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);
   double value1pp = value1p*value1p;
   double value1ppp= 1./(std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes),2));  
@@ -907,19 +908,19 @@ double BottomDecayWidths::F01_DWAVE_RHO(double alpha_rho, double alpha_lam, doub
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1.0/(4.0*std::pow(6,0.5)*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes),2));
   return k_value*(value1*value2*(std::pow(2./3., 0.5)) - 2.0);
 }
 
-double BottomDecayWidths::ARO1_DWAVE_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_DWAVE_RHO(double alpha_lam, double alpha_mes){
   double value1 = std::pow(2,0.5);
   double value2 = 1./(4.0 * std::pow(3,0.5) * std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value2*(std::pow(2./3.,0.5)) - value1;
 }
 
-double BottomDecayWidths::ARO2_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_rho,2));
   double value1pp = 1.0/(std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -927,7 +928,7 @@ double BottomDecayWidths::ARO2_DWAVE_RHO(double alpha_rho, double alpha_lam, dou
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(2,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(2,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes), 2) );
@@ -936,7 +937,7 @@ double BottomDecayWidths::BRO1_DWAVE_RHO(double alpha_rho, double alpha_lam, dou
   return (-1.0)*(value1 + value2 - value3);
 }
 
-double BottomDecayWidths::F0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -944,7 +945,7 @@ double BottomDecayWidths::F0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, do
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes), 3) );
   double value1pp = BRO1_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1   = value1p*std::pow(value1pp, 2);
@@ -953,20 +954,20 @@ double BottomDecayWidths::I01B0_DWAVE_RHO(double alpha_rho, double alpha_lam, do
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I02B0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_DWAVE_RHO(alpha_lam, alpha_mes), 3) ;
   double value2 = BRO1_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value) / std::pow(ARO2_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 2);
   double value3 = (3*std::pow(10.,0.5) * ARO1_DWAVE_RHO(alpha_lam, alpha_mes)) / (8.* std::pow( ARO2_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 5));
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I01B0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -975,7 +976,7 @@ double BottomDecayWidths::I02B0TOT_DWAVE_RHO(double alpha_rho, double alpha_lam,
 
 // RADIAL excitations
 // lambda wave functions
-double BottomDecayWidths::CBARFIN_RADIAL(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_RADIAL(double alpha_rho, double alpha_lam){
   double value1 = std::pow(3,0.75) * std::pow(2./3.,0.5);
   double value2 = std::pow(1.0/( std::pow(pi_val, 2) * std::pow(alpha_lam, 2) *std::pow(alpha_rho, 2) ), 0.75); // corrected 18.04.24
   return value1 * value2 ;// * mycomplex;//define complex if needed
@@ -984,20 +985,20 @@ double BottomDecayWidths::CBARFIN_RADIAL(double alpha_rho, double alpha_lam){
 //CBARIN_RADIAL --> same as P-wave (CBARIN)
 //CMESON_RADIAL --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_RADIAL(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_RADIAL(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO0_RADIAL(double alpha_rho, double alpha_mes){
   return ARO0_DWAVE(alpha_rho, alpha_mes);}
 
-double BottomDecayWidths::F0_RADIAL(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_RADIAL(double k_value, double alpha_rho, double alpha_lam){
   return F0_DWAVE(k_value, alpha_rho, alpha_lam);
 }
 
-double BottomDecayWidths::F01_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F01_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1.0/(2.0*std::pow(2,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(2,0.5)*alpha_mes*alpha_mes);  
   double value1pp = value1p*value1p;  
   double value1ppp= 1./(std::pow(ARO0_RADIAL(alpha_rho, alpha_mes),2));  
@@ -1006,19 +1007,19 @@ double BottomDecayWidths::F01_RADIAL(double alpha_rho, double alpha_lam, double 
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*alpha_lam*alpha_rho) + 1.0/(4.0*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_RADIAL(alpha_rho, alpha_mes),2));
   return k_value*(value1*value2 - 2.0);
 }
 
-double BottomDecayWidths::ARO1_RADIAL(double alpha_rho, double alpha_mes){
+double CharmDecayWidths::ARO1_RADIAL(double alpha_rho, double alpha_mes){
   double value1 = std::pow(2./3., 0.5);
   double value2 = 1./(2.0 * std::pow(6,0.5) * std::pow(ARO0_RADIAL(alpha_rho, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value1 - value2;
 }
 
-double BottomDecayWidths::ARO2_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_lam,2));
   double value1pp = 1.0/(3.0*std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -1026,7 +1027,7 @@ double BottomDecayWidths::ARO2_RADIAL(double alpha_rho, double alpha_lam, double
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(6,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(6,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_RADIAL(alpha_rho, alpha_mes), 2) );
@@ -1035,7 +1036,7 @@ double BottomDecayWidths::BRO1_RADIAL(double alpha_rho, double alpha_lam, double
   return value1 + value2 - value3;
 }
 
-double BottomDecayWidths::F0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_RADIAL(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -1043,7 +1044,7 @@ double BottomDecayWidths::F0TOT_RADIAL(double alpha_rho, double alpha_lam, doubl
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_RADIAL(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL(alpha_rho, alpha_mes), 3) );
   double value2p = BRO1_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes), 2);
   double value2 = value2p*ARO1_RADIAL(alpha_rho, alpha_mes) + BRO2_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
@@ -1052,7 +1053,7 @@ double BottomDecayWidths::I01B0_RADIAL(double alpha_rho, double alpha_lam, doubl
   return value1 * value2 * value3 * value4 * std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I02B0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_RADIAL(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL(alpha_rho, alpha_mes), 3) );  
   double value2p = BRO1_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_DWAVE(alpha_rho, alpha_lam, alpha_mes), 2);  
   double value2pp  = value2p*ARO1_RADIAL(alpha_rho, alpha_mes) + BRO2_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
@@ -1062,13 +1063,13 @@ double BottomDecayWidths::I02B0_RADIAL(double alpha_rho, double alpha_lam, doubl
   return value1 * (value2 + value3 )* std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I01B0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_RADIAL(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -1076,7 +1077,7 @@ double BottomDecayWidths::I02B0TOT_RADIAL(double alpha_rho, double alpha_lam, do
 
 // RADIAL excitations
 // rho wave functions
-double BottomDecayWidths::CBARFIN_RADIAL_RHO(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_RADIAL_RHO(double alpha_rho, double alpha_lam){
   double value1 = std::pow(3,0.75) * std::pow(2./3.,0.5);
   double value2 = std::pow(1.0/( std::pow(pi_val, 2) * std::pow(alpha_lam, 2) *std::pow(alpha_rho, 2) ), 0.75); // corrected 18.04.24
   return value1 * value2 ;// * mycomplex;//define complex if needed
@@ -1085,20 +1086,20 @@ double BottomDecayWidths::CBARFIN_RADIAL_RHO(double alpha_rho, double alpha_lam)
 //CBARIN_RADIAL_RHO --> same as P-wave (CBARIN)
 //CMESON_RADIAL_RHO --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_RADIAL_RHO(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_RADIAL_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO0_RADIAL_RHO(double alpha_lam, double alpha_mes){
   return ARO0_DWAVE_RHO(alpha_lam, alpha_mes);}
 
-double BottomDecayWidths::F0_RADIAL_RHO(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_RADIAL_RHO(double k_value, double alpha_rho, double alpha_lam){
   return F0_DWAVE_RHO(k_value, alpha_rho, alpha_lam);
 }
 
-double BottomDecayWidths::F01_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F01_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);  
   double value1pp = value1p*value1p;  
   double value1ppp= 1./(std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes),2));  
@@ -1107,19 +1108,19 @@ double BottomDecayWidths::F01_RADIAL_RHO(double alpha_rho, double alpha_lam, dou
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (std::pow(2./3., 0.5))/(2.0*std::pow(6.,0.5)*alpha_lam*alpha_rho) + 1.0/(4.0*std::pow(6.,0.5)*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes),2));
   return k_value*(value1*value2 - 2.0);
 }
 
-double BottomDecayWidths::ARO1_RADIAL_RHO(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_RADIAL_RHO(double alpha_lam, double alpha_mes){
   double value1 = std::pow(2., 0.5);
   double value2 = (std::pow(2./3., 0.5))/(4.0 * std::pow(3,0.5) * std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value2 - value1;
 }
 
-double BottomDecayWidths::ARO2_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_rho,2));
   double value1pp = 1.0/(std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -1127,7 +1128,7 @@ double BottomDecayWidths::ARO2_RADIAL_RHO(double alpha_rho, double alpha_lam, do
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(2,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(2,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes), 2) );
@@ -1136,7 +1137,7 @@ double BottomDecayWidths::BRO1_RADIAL_RHO(double alpha_rho, double alpha_lam, do
   return (-1.0)*(value1 + value2 - value3);
 }
 
-double BottomDecayWidths::F0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -1144,7 +1145,7 @@ double BottomDecayWidths::F0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, d
   return value1 + value2 + value3;
 }
 
-double BottomDecayWidths::I01B0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes), 3) );  
   double value2p = BRO1_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes), 2);  
   double value2 = value2p*ARO1_RADIAL_RHO(alpha_lam, alpha_mes) + BRO2_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
@@ -1153,7 +1154,7 @@ double BottomDecayWidths::I01B0_RADIAL_RHO(double alpha_rho, double alpha_lam, d
   return value1 * value2 * value3 * value4 * std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I02B0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL_RHO(alpha_lam, alpha_mes), 3) );  
   double value2p = BRO1_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes), 2);  
   double value2pp  = value2p*ARO1_RADIAL_RHO(alpha_lam, alpha_mes) + BRO2_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
@@ -1163,20 +1164,20 @@ double BottomDecayWidths::I02B0_RADIAL_RHO(double alpha_rho, double alpha_lam, d
   return value1 * (value2 + value3 )* std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I01B0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_RADIAL_RHO(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
 // Mixed excitations
-double BottomDecayWidths::CBARFIN_MIXED(double alpha_rho, double alpha_lam){
+double CharmDecayWidths::CBARFIN_MIXED(double alpha_rho, double alpha_lam){
   double value1 = (std::pow(3,0.75) * 8)/(3 * std::pow(pi_val,0.5) );
   double value2 = std::pow((1.0/alpha_rho ), 2.5);
   double value3 = std::pow((1.0/alpha_lam ), 2.5);
@@ -1186,24 +1187,24 @@ double BottomDecayWidths::CBARFIN_MIXED(double alpha_rho, double alpha_lam){
 //CBARIN_DWAVE --> same as P-wave (CBARIN)
 //CMESON_DWAVE --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_MIXED(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_MIXED(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO0_MIXED(double alpha_lam, double alpha_mes){
   double value1 = 1.0/std::pow(alpha_lam,2);  
   double value2 = 1.0/(12.0*std::pow(alpha_mes,2));
   return std::pow(value1+value2,0.5);
 }
 
-double BottomDecayWidths::F0_MIXED(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_MIXED(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) / (alpha_rho * alpha_lam) ;
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::F01_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1p  = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1./(4*std::pow(6,0.5)*alpha_mes*alpha_mes);
   double value1pp = value1p*value1p;
   double value1ppp= 1./(std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2));  
@@ -1212,19 +1213,19 @@ double BottomDecayWidths::F01_MIXED(double alpha_rho, double alpha_lam, double a
   return std::pow(k_value,2)*(value1-value2);
 }
 
-double BottomDecayWidths::BRO2_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO2_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1.0/(4.0*std::pow(6,0.5)*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2));
   return k_value*(value1*value2*(std::pow(2./3., 0.5)) - 2.0);
 }
 
-double BottomDecayWidths::ARO1_MIXED(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_MIXED(double alpha_lam, double alpha_mes){
   double value1 = std::pow(2,0.5);
   double value2 = (std::pow(2./3.,0.5))/(4.0 * std::pow(3,0.5) * std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value2 - value1;
 }
 
-double BottomDecayWidths::ARO2_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO2_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1p  = 4.0/(std::pow(alpha_rho,2));
   double value1pp = 1.0/(std::pow(alpha_mes,2));
   double value1   = 0.25*(value1p + value1pp);
@@ -1232,7 +1233,7 @@ double BottomDecayWidths::ARO2_MIXED(double alpha_rho, double alpha_lam, double 
   return std::pow(value1-value2, 0.5);
 }
 
-double BottomDecayWidths::BRO1_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
+double CharmDecayWidths::BRO1_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){  
   double value1  = k_value / ( 4*std::pow(2,0.5) * std::pow(alpha_mes,2) );
   double value2  = k_value / ( 2*std::pow(2,0.5) * alpha_rho * alpha_lam );
   double value3p = k_value / ( 4*std::pow(3,0.5) * std::pow(alpha_mes,2) * std::pow(ARO0_MIXED(alpha_lam, alpha_mes), 2) );
@@ -1241,32 +1242,32 @@ double BottomDecayWidths::BRO1_MIXED(double alpha_rho, double alpha_lam, double 
   return (-1.0)*(value1 + value2 + value3);
 }
 
-double BottomDecayWidths::ARO4_MIXED(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO4_MIXED(double alpha_lam, double alpha_mes){
   double value1 = 1./(4.0 * std::pow(3,0.5) * std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2) * std::pow(alpha_mes,2) );
   return value1;
 }
 
-double BottomDecayWidths::BRO4_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO4_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = 1.0/(2.0*std::pow(6,0.5)*alpha_lam*alpha_rho) + 1.0/(4.0*std::pow(6,0.5)*alpha_mes*alpha_mes);
   double value2 = 1.0/(std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2));
   return k_value*(value1*value2);
 }
 
-double BottomDecayWidths::ARO5_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::ARO5_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p = BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) / std::pow(ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1 = value1p*ARO1_MIXED(alpha_lam, alpha_mes);
   double value2 = BRO2_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1 + value2;
 }
 
-double BottomDecayWidths::ARO6_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::ARO6_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p = BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) / std::pow(ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 2);
   double value1 = value1p*ARO4_MIXED(alpha_lam, alpha_mes);
   double value2 = BRO4_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1 + value2;
 }
 
-double BottomDecayWidths::F0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
   double value2 = BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes) ;
   value2 = std::pow(value2,2);
@@ -1274,26 +1275,26 @@ double BottomDecayWidths::F0TOT_MIXED(double alpha_rho, double alpha_lam, double
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_MIXED(alpha_rho, alpha_lam, alpha_mes) / (4.0*std::pow(ARO0_MIXED(alpha_lam, alpha_mes), 3) );
   double value2 = BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 2);
   double value3 = std::pow(3./4.,0.5) / (std::pow( ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 3) );
   return value1*value2*value3*std::pow(pi_val,1.5);
 }
 
-double BottomDecayWidths::I02B0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::I02B0_MIXED(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = C0_MIXED(alpha_rho, alpha_lam, alpha_mes) / (1.0*std::pow(ARO0_MIXED(alpha_lam, alpha_mes), 3) );
   double value2 = (3.0*std::pow(3./4.,0.5)) / (8.0*std::pow( ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 5) );
   return value1*value2*std::pow(pi_val,1.5);
 }
 
-double BottomDecayWidths::I01B0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_MIXED(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_MIXED(alpha_rho, alpha_lam, alpha_mes);
   return value1*value2;
@@ -1302,34 +1303,34 @@ double BottomDecayWidths::I02B0TOT_MIXED(double alpha_rho, double alpha_lam, dou
 // SECOND DIAGRAM
 // D-WAVE LAMBDA
 // same as   C0_DWAVE
-double BottomDecayWidths::ARO0_DWAVE_SECOND(double alpha_rho){
+double CharmDecayWidths::ARO0_DWAVE_SECOND(double alpha_rho){
   return 1./alpha_rho;
 }
 
-double BottomDecayWidths::F0_DWAVE_SECOND(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_DWAVE_SECOND(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam);
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_DWAVE_SECOND(double alpha_mes, double k_value){
+double CharmDecayWidths::F01_DWAVE_SECOND(double alpha_mes, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 = (-1.0)/(8 * std::pow(alpha_mes, 2));
   return value1 * value2;
 }
 
-double BottomDecayWidths::BRO1_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (-1.0)/(2.*std::pow(6, 0.5)*alpha_mes*alpha_mes);
   double value2 = (-1.0)/(std::pow(6, 0.5)*alpha_rho*alpha_lam);
   return k_value*(value1 + value2);
 }
 
-double BottomDecayWidths::ARO1_DWAVE_SECOND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_DWAVE_SECOND(double alpha_lam, double alpha_mes){
   double value1 = 1.0/(alpha_lam*alpha_lam);
   double value2 = 1.0/(3*alpha_mes*alpha_mes);
   return std::pow(value1 + value2, 0.5);
 }
 
-double BottomDecayWidths::F0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_DWAVE_SECOND(alpha_mes, k_value);
   double value2 = BRO1_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO1_DWAVE_SECOND(alpha_lam, alpha_mes) ;
   value2 = std::pow(value2, 2);
@@ -1337,7 +1338,7 @@ double BottomDecayWidths::F0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam,
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_DWAVE(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_DWAVE_SECOND(alpha_rho), 3) );
   double value1pp = BRO1_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_DWAVE_SECOND(alpha_lam, alpha_mes), 2);
   double value1   = value1p*std::pow(value1pp, 2);
@@ -1346,20 +1347,20 @@ double BottomDecayWidths::I01B0_DWAVE_SECOND(double alpha_rho, double alpha_lam,
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I02B0_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = C0_DWAVE(alpha_rho, alpha_lam, alpha_mes) / std::pow(ARO0_DWAVE_SECOND(alpha_rho), 3) ;
   double value2 = BRO1_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / std::pow(ARO1_DWAVE_SECOND(alpha_lam, alpha_mes), 2);
   double value3 = std::pow(15.,0.5) / (2.* std::pow( ARO1_DWAVE_SECOND(alpha_lam, alpha_mes), 5));
   return value1*value2*value3*pi_val*pi_val;
 }
 
-double BottomDecayWidths::I01B0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_DWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -1369,40 +1370,40 @@ double BottomDecayWidths::I02B0TOT_DWAVE_SECOND(double alpha_rho, double alpha_l
 // SECOND DIAGRAM
 // D-WAVE RHO
 // C0 same as C0_DWAVE_RHO
-double BottomDecayWidths::C0_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = std::pow(CBARFIN_DWAVE_RHO(alpha_rho, alpha_lam), 2);
   double value2 = CMESON(alpha_mes);
   return (1/(3.*std::pow(3, 0.5)))*value1*value2;
 }
 
-double BottomDecayWidths::ARO0_DWAVE_RHO_SECOND(double alpha_rho){
+double CharmDecayWidths::ARO0_DWAVE_RHO_SECOND(double alpha_rho){
   return 1./alpha_rho;
 }
 
-double BottomDecayWidths::F0_DWAVE_RHO_SECOND(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_DWAVE_RHO_SECOND(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam);
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_DWAVE_RHO_SECOND(double alpha_mes, double k_value){
+double CharmDecayWidths::F01_DWAVE_RHO_SECOND(double alpha_mes, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 = (-1.0)/(8 * std::pow(alpha_mes, 2));
   return value1 * value2;
 }
 
-double BottomDecayWidths::BRO1_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (-1.0)/(2.*std::pow(6, 0.5)*alpha_mes*alpha_mes);
   double value2 = (-1.0)/(std::pow(6, 0.5)*alpha_rho*alpha_lam);
   return k_value*(value1 + value2);
 }
 
-double BottomDecayWidths::ARO1_DWAVE_RHO_SECOND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_DWAVE_RHO_SECOND(double alpha_lam, double alpha_mes){
   double value1 = 1.0/(alpha_lam*alpha_lam);
   double value2 = 1.0/(3*alpha_mes*alpha_mes);
   return std::pow(value1 + value2, 0.5);
 }
 
-double BottomDecayWidths::F0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_DWAVE_RHO_SECOND(alpha_mes, k_value);
   double value2 = BRO1_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO1_DWAVE_RHO_SECOND(alpha_lam, alpha_mes) ;
   value2 = std::pow(value2, 2);
@@ -1410,7 +1411,7 @@ double BottomDecayWidths::F0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alpha_
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_DWAVE_RHO_SECOND(alpha_rho), 7) );
   double value1pp = BRO1_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_DWAVE_RHO_SECOND(alpha_lam, alpha_mes), 2);
   double value1   = value1p * (15./16.);
@@ -1419,7 +1420,7 @@ double BottomDecayWidths::I01B0_DWAVE_RHO_SECOND(double alpha_rho, double alpha_
   return value1*value2*value3*std::pow(pi_val, 1.5);
 }
 
-double BottomDecayWidths::I01B0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -1428,41 +1429,41 @@ double BottomDecayWidths::I01B0TOT_DWAVE_RHO_SECOND(double alpha_rho, double alp
 // SECOND DIAGRAM
 // P-WAVE lambda
 // CBARIN the same
-double BottomDecayWidths::C0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = CBARFIN_PWAVE(alpha_rho, alpha_lam);
   double value2 = CBARIN(alpha_rho, alpha_lam);
   double value3 = CMESON(alpha_mes);
   return (1./(3.*std::pow(3, 0.5)))*value1*value2*value3;
 }
 
-double BottomDecayWidths::ARO0_PWAVE_SECOND(double alpha_rho){
+double CharmDecayWidths::ARO0_PWAVE_SECOND(double alpha_rho){
   return 1./alpha_rho;
 }
 
-double BottomDecayWidths::F0_PWAVE_SECOND(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_PWAVE_SECOND(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam);
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_PWAVE_SECOND(double alpha_mes, double k_value){
+double CharmDecayWidths::F01_PWAVE_SECOND(double alpha_mes, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 = (-1.0)/(8 * std::pow(alpha_mes, 2));
   return value1 * value2;
 }
 
-double BottomDecayWidths::BRO1_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (-1.0)/(2.*std::pow(6, 0.5)*alpha_mes*alpha_mes);
   double value2 = (-1.0)/(std::pow(6, 0.5)*alpha_rho*alpha_lam);
   return k_value*(value1 + value2);
 }
 
-double BottomDecayWidths::ARO1_PWAVE_SECOND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_PWAVE_SECOND(double alpha_lam, double alpha_mes){
   double value1 = 1.0/(alpha_lam*alpha_lam);
   double value2 = 1.0/(3*alpha_mes*alpha_mes);
   return std::pow(value1 + value2, 0.5);
 }
 
-double BottomDecayWidths::F0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_PWAVE_SECOND(alpha_mes, k_value);
   double value2 = BRO1_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO1_PWAVE_SECOND(alpha_lam, alpha_mes) ;
   value2 = std::pow(value2, 2);
@@ -1470,7 +1471,7 @@ double BottomDecayWidths::F0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam,
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_PWAVE_SECOND(alpha_rho), 3) );
   double value1pp = BRO1_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_PWAVE_SECOND(alpha_lam, alpha_mes), 2);
   double value1   = value1p * value1pp;
@@ -1479,20 +1480,20 @@ double BottomDecayWidths::I01B0_PWAVE_SECOND(double alpha_rho, double alpha_lam,
   return value1*value2*value3*std::pow(pi_val, 2);
 }
 
-double BottomDecayWidths::I02B0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_PWAVE_SECOND(alpha_rho), 3) );
   double value1   = value1p * ((2*std::pow(6, 0.5))/3.);
   double value2   = (3./8.)/ (std::pow( ARO1_PWAVE_SECOND(alpha_lam, alpha_mes), 5) );
   return value1*value2*std::pow(pi_val, 2);
 }
 
-double BottomDecayWidths::I01B0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_PWAVE_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -1501,41 +1502,41 @@ double BottomDecayWidths::I02B0TOT_PWAVE_SECOND(double alpha_rho, double alpha_l
 // SECOND DIAGRAM
 // MIXED
 // CMESON the same
-double BottomDecayWidths::C0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = CBARFIN_MIXED(alpha_rho, alpha_lam);
   double value2 = CBARFIN_PWAVE_RHO(alpha_rho, alpha_lam);
   double value3 = CMESON(alpha_mes);
   return (1/(3.*std::pow(3, 0.5)))*value1*value2*value3;
 }
 
-double BottomDecayWidths::ARO0_MIXED_SECOND(double alpha_rho){
+double CharmDecayWidths::ARO0_MIXED_SECOND(double alpha_rho){
   return 1./alpha_rho;
 }
 
-double BottomDecayWidths::F0_MIXED_SECOND(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_MIXED_SECOND(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam);
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_MIXED_SECOND(double alpha_mes, double k_value){
+double CharmDecayWidths::F01_MIXED_SECOND(double alpha_mes, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 = (-1.0)/(8 * std::pow(alpha_mes, 2));
   return value1 * value2;
 }
 
-double BottomDecayWidths::BRO1_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (-1.0)/(2.*std::pow(6, 0.5)*alpha_mes*alpha_mes);
   double value2 = (-1.0)/(std::pow(6, 0.5)*alpha_rho*alpha_lam);
   return k_value*(value1 + value2);
 }
 
-double BottomDecayWidths::ARO1_MIXED_SECOND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_MIXED_SECOND(double alpha_lam, double alpha_mes){
   double value1 = 1.0/(alpha_lam*alpha_lam);
   double value2 = 1.0/(3*alpha_mes*alpha_mes);
   return std::pow(value1 + value2, 0.5);
 }
 
-double BottomDecayWidths::F0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_MIXED_SECOND(alpha_mes, k_value);
   double value2 = BRO1_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO1_MIXED_SECOND(alpha_lam, alpha_mes) ;
   value2 = std::pow(value2, 2);
@@ -1543,7 +1544,7 @@ double BottomDecayWidths::F0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam,
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_MIXED_SECOND(alpha_rho), 5) );
   double value1pp = BRO1_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_MIXED_SECOND(alpha_lam, alpha_mes), 2);
   double value1   = value1p * value1pp * (3./8.);
@@ -1552,20 +1553,20 @@ double BottomDecayWidths::I01B0_MIXED_SECOND(double alpha_rho, double alpha_lam,
   return value1*value2*value3*std::pow(pi_val, 1);
 }
 
-double BottomDecayWidths::I02B0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1p  = C0_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_MIXED_SECOND(alpha_rho), 5) );
   double value1   = value1p * (3./8.);
   double value2   = ((std::pow(6, 0.5))/4.)/ (std::pow( ARO1_MIXED_SECOND(alpha_lam, alpha_mes), 5) );
   return value1*value2*std::pow(pi_val, 1);
 }
 
-double BottomDecayWidths::I01B0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_MIXED_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
@@ -1578,40 +1579,40 @@ double BottomDecayWidths::I02B0TOT_MIXED_SECOND(double alpha_rho, double alpha_l
 //CBARIN_RADIAL_SECOND --> same as P-wave (CBARIN)
 //CMESON_RADIAL_SECOND --> same as P-wave (CMESON)
 
-double BottomDecayWidths::C0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
+double CharmDecayWidths::C0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes){
   double value1 = 1.0 / (3.0*std::pow(3,0.5));
   double value2 = CBARFIN_RADIAL(alpha_rho, alpha_lam) * CBARIN(alpha_rho, alpha_lam) * CMESON(alpha_mes);
   return value1 * value2;
 }
 
-double BottomDecayWidths::ARO0_RADIAL_SECOND(double alpha_rho){
+double CharmDecayWidths::ARO0_RADIAL_SECOND(double alpha_rho){
   return 1./alpha_rho;
 }
 
-double BottomDecayWidths::F0_RADIAL_SECOND(double k_value, double alpha_rho, double alpha_lam){
+double CharmDecayWidths::F0_RADIAL_SECOND(double k_value, double alpha_rho, double alpha_lam){
   double value1 = std::pow(k_value, 2) /(alpha_rho * alpha_lam);
   return (-1.0/3.0) * value1;
 }
 
-double BottomDecayWidths::F01_RADIAL_SECOND(double alpha_mes, double k_value){
+double CharmDecayWidths::F01_RADIAL_SECOND(double alpha_mes, double k_value){
   double value1 = std::pow(k_value, 2);
   double value2 = (-1.0)/(8 * std::pow(alpha_mes, 2));
   return value1 * value2;
 }
 
-double BottomDecayWidths::BRO1_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::BRO1_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = (-1.0)/(2.*std::pow(6, 0.5)*alpha_mes*alpha_mes);
   double value2 = (-1.0)/(std::pow(6, 0.5)*alpha_rho*alpha_lam);
   return k_value*(value1 + value2);
 }
 
-double BottomDecayWidths::ARO1_RADIAL_SECOND(double alpha_lam, double alpha_mes){
+double CharmDecayWidths::ARO1_RADIAL_SECOND(double alpha_lam, double alpha_mes){
   double value1 = 1.0/(alpha_lam*alpha_lam);
   double value2 = 1.0/(3*alpha_mes*alpha_mes);
   return std::pow(value1 + value2, 0.5);
 }
 
-double BottomDecayWidths::F0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::F0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = F01_RADIAL_SECOND(alpha_mes, k_value);
   double value2 = BRO1_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value) / ARO1_RADIAL_SECOND(alpha_lam, alpha_mes) ;
   value2 = std::pow(value2, 2);
@@ -1619,7 +1620,7 @@ double BottomDecayWidths::F0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam
   return value1 + value2 + value3; 
 }
 
-double BottomDecayWidths::I01B0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1   = C0_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL_SECOND(alpha_rho), 3) );
   double value1pp = BRO1_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_RADIAL_SECOND(alpha_lam, alpha_mes), 2);
   double value2   = 1.5 - std::pow(value1pp/alpha_lam, 2);
@@ -1628,7 +1629,7 @@ double BottomDecayWidths::I01B0_RADIAL_SECOND(double alpha_rho, double alpha_lam
   return value1*value2*value3*value4*std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I02B0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1   = C0_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes) / (std::pow(ARO0_RADIAL_SECOND(alpha_rho), 3) );
   double value1pp = BRO1_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO1_RADIAL_SECOND(alpha_lam, alpha_mes), 2);
   double value2p  = ( (2*std::pow(3, 0.5)) * ( value1pp*((2*std::pow(6, 0.5))/3.) + 2*k_value) ) / std::pow(alpha_lam, 2);  
@@ -1638,13 +1639,13 @@ double BottomDecayWidths::I02B0_RADIAL_SECOND(double alpha_rho, double alpha_lam
   return value1*value2*value3*std::pow(pi_val, 2.5);
 }
 
-double BottomDecayWidths::I01B0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I01B0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I01B0_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
 
-double BottomDecayWidths::I02B0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
+double CharmDecayWidths::I02B0TOT_RADIAL_SECOND(double alpha_rho, double alpha_lam, double alpha_mes, double k_value){
   double value1 = std::exp(F0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value));
   double value2 = I02B0_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;

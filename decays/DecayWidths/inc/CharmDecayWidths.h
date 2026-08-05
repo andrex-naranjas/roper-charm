@@ -1,15 +1,15 @@
-//BottomDecayWidths includes
-#ifndef BOTTOMECAYWIDTHS_H
-#define BOTTOMDECAYWIDTHS_H
+//CharmDecayWidths includes
+#ifndef CHARMECAYWIDTHS_H
+#define CHARMDECAYWIDTHS_H
 
 #include <string>
 #include <vector>
 
-class BottomDecayWidths{
+class CharmDecayWidths{
 
 public:
-  BottomDecayWidths();
-  virtual ~BottomDecayWidths();
+  CharmDecayWidths();
+  virtual ~CharmDecayWidths();
   virtual double execute(double ma_avg_val, double mb_avg_val, double mc_avg_val, double ma_val, double mb_val, double mc_val,
 			 double ga_val, double sa_val,
 			 double la_val, double ja_val, double sl_val, double al_val, double ar_val,
@@ -260,12 +260,12 @@ private:
 
 //to talk to python
 extern "C"{
-  double bottom_execute(double ma_avg_val, double mb_avg_val, double mc_avg_val, double ma_val, double mb_val, double mc_val,
+  double charm_execute(double ma_avg_val, double mb_avg_val, double mc_avg_val, double ma_val, double mb_val, double mc_val,
 			double ga_val, double sa_val,
 			double la_val, double ja_val, double sl_val, double al_val, double ar_val,
 			int baryon, int excMode, int prodDecay){
 
-    BottomDecayWidths* m_decays = new BottomDecayWidths();
+    CharmDecayWidths* m_decays = new CharmDecayWidths();
     return m_decays->execute(ma_avg_val, mb_avg_val, mc_avg_val, ma_val, mb_val, mc_val,
 			     ga_val, sa_val,
 			     la_val, ja_val, sl_val, al_val, ar_val,

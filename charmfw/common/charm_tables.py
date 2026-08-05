@@ -35,9 +35,9 @@ class CharmTables:
         if not os.path.exists(self.m_workpath+"/tables/"):
             os.mkdir(self.m_workpath+"/tables/")
         f_paper = open(self.m_workpath+'/tables/masses_'+self.m_baryons+'_paper.tex', "w")
-        print(r"\\begin{tabular}{c | c c c c }\hline \hline ", file=f_paper)
-        print(r" State     & Predicted Mass   & Experimental Mass & Predicted Width & Experimental Width   \\\ ", file=f_paper)
-        print(r"           &      (MeV)       &    (MeV)          &      (MeV)      & $\Gamma_{tot}$ (MeV) \\\ \hline", file=f_paper)
+        print(r"\begin{tabular}{c | c c c c }\hline \hline ", file=f_paper)
+        print(r" State     & Predicted Mass   & Experimental Mass & Predicted Width & Experimental Width   \\ ", file=f_paper)
+        print(r"           &      (MeV)       &    (MeV)          &      (MeV)      & $\Gamma_{tot}$ (MeV) \\ \hline", file=f_paper)
 
         for i in range(len(self.m_mass)):
 
@@ -52,7 +52,7 @@ class CharmTables:
                   round(self.m_decay[i], 1),'^{+', round(self.m_decay_up[i], 1),'}_{-', round(self.m_decay_dn[i], 1),'}$', ' &', exp_width, '\\\\ ', file=f_paper)
 
         name = self.m_baryons
-        label = 'three_quark'
+        label = 'di_quark'
         print(r'\hline \hline', file=f_paper)
         print(r'\end{tabular}', file=f_paper)
         print(r"\caption{Every quantity is in MeV, except for percentage differences. States: $", self.m_baryons, "$}",file=f_paper)
@@ -186,10 +186,11 @@ class CharmTables:
         Method to save a latex table for individual strong decays
         """
         df = pd.read_csv(self.m_workpath+'/tables/decays_indi_'+self.m_baryons+'_summary.csv')
+        print(self.m_workpath+'/tables/decays_indi_'+self.m_baryons+'_summary.csv')
         f_decay_indi = open(self.m_workpath+'/tables/decay_indi_'+self.m_baryons+'_paper.tex', "w")
         n_decay_channels = int((len(df.columns)-8)/3)
         baryons = self.m_baryons
-
+        
         flavor = "$\\mathcal{F}={\\bf {6}}_{\\rm F}$ " # omegas, sigmas, cascades
         if (baryons=="cascades_anti3" or baryons=="lambdas"): # cascades_anti3, lambdas
             flavor = "$\\mathcal{F}={\\bf {\\bar{3}}}_{\\rm F}$"
@@ -364,7 +365,6 @@ class CharmTables:
             charged_name = "_charged"
         
         df = pd.read_csv(self.m_workpath+'/tables/decays_indi_em_'+self.m_baryons+charged_name+'_summary.csv')
-        input()
         f_decay_indi = open(self.m_workpath+'/tables/decay_indi_em_err_'+ self.m_baryons + charged_name + '_paper.tex', "w")
 
         #n_decay_channels = int((len(df.columns)-9)/3) #for sextet
@@ -477,6 +477,41 @@ class CharmTables:
             str(abs(round(np.sort(value)[qntl_up-1] - np.mean(value), decimals)))+'}$ '+units
 
         
+    def parameter_single(self):
+        """ 
+        Method to produce the combined parameter table
+        """
+        Md1 = self.latex_string_value_error(self.m_sampled_md1,  decimals=0, units='MeV')
+        Md2 = self.latex_string_value_error(self.m_sampled_md2,  decimals=0, units='MeV')
+        Md3 = self.latex_string_value_error(self.m_sampled_md3,  decimals=0, units='MeV')
+        MC  = self.latex_string_value_error(self.m_sampled_mb ,  decimals=0, units='MeV')
+        t_di= self.latex_string_value_error(self.m_sampled_t_di, decimals=2, units='MeV')
+        b_di= self.latex_string_value_error(self.m_sampled_b_di, decimals=2, units='MeV')
+        A_di= self.latex_string_value_error(self.m_sampled_a_di, decimals=1, units='MeV')
+        B_di= self.latex_string_value_error(self.m_sampled_b_di, decimals=1, units='MeV')
+        E_di= self.latex_string_value_error(self.m_sampled_e_di, decimals=1, units='MeV')
+        G_di= self.latex_string_value_error(self.m_sampled_g_di, decimals=1, units='MeV')
+    
+        dd = '$\\dagger$'
+        if not os.path.exists(self.m_workpath+"/tables/"):
+            os.mkdir(self.m_workpath+"/tables/")
+        f = open(self.m_workpath+'/tables/fit_parameters_combined.tex', "w")
+        print(r"\begin{tabular}{c |  c}\hline \hline", file=f)
+        print(r" Parameter     & Diquark value    \\ \hline", file=f)
+        print(r" $m_{c}$ &",                     MC,  "\\\\ ", file=f)
+        print(r" $m_{D_{\Xi}}$             &",   Md2, "\\\\ ", file=f)
+        print(r" $\tau$   &"                  ,  t_di,"\\\\ ", file=f)
+        print(r" $\beta$     &"               ,  b_di,"\\\\ ", file=f)
+        print(r" $P_S$     &"                 ,  A_di,"\\\\ ", file=f)
+        print(r" $P_{SL}$     &"              ,  B_di,"\\\\ ", file=f)
+        print(r" $P_{I}$     &"               ,  E_di,"\\\\ ", file=f)
+        print(r" $P_{f}$     &"               ,  G_di,"\\\\ ", file=f)
+        print(r"\hline\hline", file=f)
+        print(r"\end{tabular}", file=f)
+        print(r"\caption{Model fitted paremeters parameters.}",file=f)
+        print(r"\label{tab:comb_fit}", file=f)
+        f.close()
+    
     def parameter_combined(self):
         """
         Method to produce the combined parameter table
@@ -522,6 +557,8 @@ class CharmTables:
         print(r"\caption{Model fitted paremeters parameters.}",file=f)
         print(r"\label{tab:comb_fit}", file=f)
         f.close()
+
+
 
 
     def parameter_combined_flavor(self):
@@ -657,7 +694,7 @@ class CharmTables:
         Method to load the data for all the tables
         -- three and diquark both already computed
         """
-        data_frame = pd.read_csv(self.m_workpath+"/tables/masses_" + baryons + "_summary.csv")
+        data_frame = pd.read_csv(self.m_workpath+"/tables/masses_diquark_" + baryons + "_summary.csv")
         self.m_mass=        data_frame['mass']
         self.m_error_up=    data_frame['error_up']
         self.m_error_dn=    data_frame['error_dn']
@@ -694,25 +731,18 @@ class CharmTables:
             df_from_each_file = (pd.read_csv(f) for f in all_files)
             data_frame = pd.concat(df_from_each_file, ignore_index=True)            
         else:
-            data_frame = pd.read_csv(self.m_workpath+"/tables/bootstrap_param_"+baryons+".csv")
-        
-        self.m_sampled_m1 = data_frame["M1"]
-        self.m_sampled_m2 = data_frame["M2"]
-        self.m_sampled_m3 = data_frame["M3"]
-        self.m_sampled_k   = data_frame["K"].pow(2).div(pow(1000,3))
-        self.m_sampled_a   = data_frame["A"]
-        self.m_sampled_b   = data_frame["B"]
-        self.m_sampled_e   = data_frame["E"]
-        self.m_sampled_g   = data_frame["G"]
-
+            data_frame = pd.read_csv(self.m_workpath+"/tables/bootstrap_param_diquark_"+baryons+".csv")
+    
         data_frame_di = pd.read_csv(self.m_workpath+"/tables/bootstrap_param_diquark_"+baryons+".csv")
+        self.m_sampled_t_di = data_frame_di["TAU"]
+        self.m_sampled_b_di = data_frame_di["BETA"]
         self.m_sampled_md1  = data_frame_di["Md1"]
         self.m_sampled_md2  = data_frame_di["Md2"]
         self.m_sampled_md3  = data_frame_di["Md3"]
         self.m_sampled_md4  = data_frame_di["Md3"]
         self.m_sampled_md5  = data_frame_di["Md3"]
-        self.m_sampled_mb   = data_frame_di["MB"]
-        self.m_sampled_k_di = data_frame_di["K"].pow(2).div(pow(1000,3))
+        self.m_sampled_mb   = data_frame_di["MC"]
+        
         self.m_sampled_a_di = data_frame_di["A"]
         self.m_sampled_b_di = data_frame_di["B"]
         self.m_sampled_e_di = data_frame_di["E"]
@@ -723,8 +753,8 @@ class CharmTables:
             df_from_each_file = (pd.read_csv(f) for f in all_files)
             data_frame = pd.concat(df_from_each_file, ignore_index=True)            
         else:
-            data_frame = pd.read_csv(self.m_workpath+"/tables/bootstrap_correlation_"+baryons+".csv")
-            
+            data_frame = pd.read_csv(self.m_workpath+"/tables/bootstrap_correlation_diquark_"+baryons+".csv")
+        '''    
         self.m_rho_m2m1 = round(np.mean(data_frame['rho_m2m1']), 2)
         self.m_rho_m3m1 = round(np.mean(data_frame['rho_m3m1']), 2)
         self.m_rho_km1  = round(np.mean(data_frame['rho_km1']), 2)
@@ -753,7 +783,7 @@ class CharmTables:
         self.m_rho_eb   = round(np.mean(data_frame['rho_eb']), 2)
         self.m_rho_gb   = round(np.mean(data_frame['rho_gb']), 2)
         self.m_rho_ge   = round(np.mean(data_frame['rho_ge']), 2)
-
+        '''
         # diquark 
         if self.m_batch and False:
             all_files = glob.glob(os.path.join(self.m_workpath+"/batch_results_diquark/"+baryons+"/correlation/", "*.csv"))
@@ -762,6 +792,7 @@ class CharmTables:
         else:
             data_frame = pd.read_csv(self.m_workpath+"/tables/bootstrap_correlation_diquark_"+baryons+".csv")
 
+        '''
         self.m_rho_md2md1 =   round(np.mean(data_frame['rho_md2md1']), 2)
         self.m_rho_md3md1 =   round(np.mean(data_frame['rho_md3md1']), 2)
         self.m_rho_md4md1 =   round(np.mean(data_frame['rho_md2md1']), 2)
@@ -817,6 +848,7 @@ class CharmTables:
         self.m_rho_eb_di  =   round(np.mean(data_frame['rho_eb']), 2)
         self.m_rho_gb_di  =   round(np.mean(data_frame['rho_gb']), 2)
         self.m_rho_ge_di  =   round(np.mean(data_frame['rho_ge']), 2)
+        '''
 
     def m_load_data_compare(self, baryons):
         data_frame = pd.read_csv(self.m_workpath+"/charmfw/data/three_quark_comp/masses_" + baryons + "_compare.csv")

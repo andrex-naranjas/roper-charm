@@ -88,10 +88,10 @@ class CharmDiquark:
                     dummy_omega = np.append(dummy_omega, omega_ho)
                     if decay_width and bootstrap_width: # and self.L_tot[i]==1  # decayWidth calculation, DecayWidths class
                         self.baryon_decay.load_average_mass(mass_avg) # load central value of massA to enforce energy conservation
-                        decay_value = self.baryon_decay.total_decay_width(baryons, self.sampled_k[j], mass,
+                        decay_value = self.baryon_decay.total_decay_width(baryons, self.tau, mass,#mass_single,
                                                                           self.S_tot[i], self.L_tot[i], self.J_tot[i], self.SL[i],
-                                                                          self.ModEx[i], bootstrap=bootstrap_width, m1=self.sampled_m1[j],
-                                                                          m2=self.sampled_m2[j], m3=self.sampled_m3[j])            
+                                                                          self.ModEx[i], bootstrap=bootstrap_width, md1=self.sampled_md1[j],
+                                                                          md2=self.sampled_md2[j], md3=self.sampled_md3[j], mc=self.sampled_mc[j])
                         dummy_decay = np.append(dummy_decay, decay_value) # total decay
                         decays_indi_csv.append(self.baryon_decay.channel_widths_vector[0]) # individual channels decays
                         self.baryon_decay.channel_widths_vector=[]
@@ -170,16 +170,16 @@ class CharmDiquark:
                     
                     channel_names = [str(k)+"_channel" for k in range(len(decays_indi_csv[0]))]
                     df_decays_indi = pd.DataFrame({channel_names[0]: decay_columns[0]})
-                    for k in range(len(decays_indi_csv[0])-1):            
+                    for k in range(len(decays_indi_csv[0])-1):
                         df_decays_indi[channel_names[k+1]]=decay_columns[k+1]                    
                     if self.m_batch_number is None:
                         if df_decays_indi is not None:
-                            if not os.path.exists(self.m_workpath+"/tables/decays_indi/"):
-                                os.makedirs(self.m_workpath+"/tables/decays_indi/")                            
-                            df_decays_indi.to_csv(self.m_workpath+"/tables/decays_indi/decays_state_"+str(i)+"_"+self.m_baryons+".csv", index=False)
+                            if not os.path.exists(self.m_workpath+"/tables/decays_indi_diquark/"):
+                                os.makedirs(self.m_workpath+"/tables/decays_indi_diquark/")                            
+                            df_decays_indi.to_csv(self.m_workpath+"/tables/decays_indi_diquark/decays_state_"+str(i)+"_"+self.m_baryons+".csv", index=False)
                     else:
                         if df_decays_indi is not None:  # save results for batch a given batch job
-                            dec_dir = self.m_workpath+"/batch_results/"+self.m_baryons+"/decays_indi/state_"+str(i)
+                            dec_dir = self.m_workpath+"/batch_results/"+self.m_baryons+"/decays_indi_diquark/state_"+str(i)
                             if not os.path.exists(dec_dir):
                                 os.makedirs(dec_dir)
                             df_decays_indi.to_csv(dec_dir+"/"+str(self.m_batch_number)+".csv", index=False)                         
@@ -201,12 +201,12 @@ class CharmDiquark:
                         df_decays_indi_em[channel_names_em[k+1]]=decay_columns_em[k+1]
                     if self.m_batch_number is None:
                         if df_decays_indi_em is not None:
-                            if not os.path.exists(self.m_workpath+"/tables/decays_indi_em/"):
-                                os.makedirs(self.m_workpath+"/tables/decays_indi_em/")                            
-                            df_decays_indi_em.to_csv(self.m_workpath+"/tables/decays_indi_em/decays_state_"+str(i)+"_"+self.m_baryons+".csv", index=False)
+                            if not os.path.exists(self.m_workpath+"/tables/decays_indi_em_diquark/"):
+                                os.makedirs(self.m_workpath+"/tables/decays_indi_em_diquark/")                            
+                            df_decays_indi_em.to_csv(self.m_workpath+"/tables/decays_indi_em_diquark/decays_state_"+str(i)+"_"+self.m_baryons+".csv", index=False)
                     else:
                         if df_decays_indi_em is not None:  # save results for batch a given batch job
-                            dec_dir_em = self.m_workpath+"/batch_results/"+self.m_baryons+"/decays_indi_em/state_"+str(i)
+                            dec_dir_em = self.m_workpath+"/batch_results/"+self.m_baryons+"/decays_indi_em_diquark/state_"+str(i)
                             if not os.path.exists(dec_dir_em):
                                 os.makedirs(dec_dir_em)
                             df_decays_indi_em.to_csv(dec_dir_em+"/"+str(self.m_batch_number)+".csv", index=False)                                                   
@@ -236,33 +236,32 @@ class CharmDiquark:
             if df_masses is not None:
                 if not os.path.exists(self.m_workpath+"/tables/"):
                     os.makedirs(self.m_workpath+"/tables/")
-                df_masses.to_csv(self.m_workpath+"/tables/masses_states_"+self.m_baryons+".csv", index=False)
+                df_masses.to_csv(self.m_workpath+"/tables/masses_states_diquark_"+self.m_baryons+".csv", index=False)
             if df_omegas is not None:
                 if not os.path.exists(self.m_workpath+"/tables/"):
                     os.makedirs(self.m_workpath+"/tables/")
-                df_omegas.to_csv(self.m_workpath+"/tables/harmonic_states_"+self.m_baryons+".csv", index=False)
+                df_omegas.to_csv(self.m_workpath+"/tables/harmonic_states_diquark_"+self.m_baryons+".csv", index=False)
             if df_decays is not None:
                 if not os.path.exists(self.m_workpath+"/tables/"):
                     os.makedirs(self.m_workpath+"/tables/")
-                df_decays.to_csv(self.m_workpath+"/tables/decays_states_"+self.m_baryons+".csv", index=False)
+                df_decays.to_csv(self.m_workpath+"/tables/decays_states_diquark_"+self.m_baryons+".csv", index=False)
             if df_electro is not None:
                 if not os.path.exists(self.m_workpath+"/tables/"):
                     os.makedirs(self.m_workpath+"/tables/")
-                df_electro.to_csv(self.m_workpath+"/tables/decays_electro_states_"+self.m_baryons+".csv", index=False)
+                df_electro.to_csv(self.m_workpath+"/tables/decays_electro_states_diquark_"+self.m_baryons+".csv", index=False)
         else:
             if df_masses is not None:  # save results for batch a given batch job
-                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states/"):
-                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states/")
-                df_masses.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states/"+str(self.m_batch_number)+".csv", index=False)
+                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states_diquark/"):
+                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states_diquark/")
+                df_masses.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/mass_states_diquark/"+str(self.m_batch_number)+".csv", index=False)
             if df_decays is not None:
-                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states/"):
-                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states/")
-                df_decays.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states/"+str(self.m_batch_number)+".csv", index=False)
+                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_diquark/"):
+                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_diquark/")
+                df_decays.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_diquark/"+str(self.m_batch_number)+".csv", index=False)
             if df_electro is not None:
-                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro/"):
-                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro/")
-                df_electro.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro/"+str(self.m_batch_number)+".csv", index=False)
-
+                if not os.path.exists(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro_diquark/"):
+                    os.makedirs(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro_diquark/")
+                df_electro.to_csv(self.m_workpath+"/batch_results/"+self.m_baryons+"/decay_states_electro_diquark/"+str(self.m_batch_number)+".csv", index=False)
 
 
                         
@@ -306,7 +305,6 @@ class CharmDiquark:
         self.x_param = self.params['X']
         self.y_param = self.params['Y']
         self.z_param = self.params['Z']
-
         
         # correlation matrix
         self.rho_md2md1 = np.mean(self.corr_mat['rho_md2md1'])

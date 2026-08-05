@@ -75,24 +75,37 @@ def least_squares(md1, md2, md3, mc, tau, beta, a, b, e, g):
     # return np.sum((pred_m - exp_m)**2 / (yvar_2**2)) #**2
 
 def fit(least_squares):
-    m = Minuit(least_squares, md1=900, md2=300, md3=250, mc=1400, tau=0, beta=0, a=0, b=0, e=0, g=0)
+    m = Minuit(least_squares, md1=900, md2=300, md3=525, mc=1400, tau=0, beta=0, a=0, b=0, e=0, g=0)
     m.limits['md1'] = (850,2000) # omega
     m.limits['md2'] = (700, 1200)  # cascade
     # m.limits['md3'] = (500,700) # sigma/lambda
     m.limits['mc']  =  (1200,1700)
     
-    m.limits['tau'] = (0.2, 1.5)
+    m.limits['tau'] = (0.2, 1.5) # (0.2,1.5)
     m.limits['beta'] = (5000, 30000)
-
-    #m.limits['tau'] = (0.19, 0.21)
-    #m.limits['beta'] = (11900, 11902)
 
     #m.limits['tau'] = (1, 100)
     #m.limits['beta'] = (1, 100)
-    m.limits['a'] = (23, 25)#(10, 50)
-    m.limits['b'] = (17, 19)#(20, 25)
-    m.limits['e'] = (42, 46)#(20, 50)
-    m.limits['g'] = (51, 53)#(20, 60)
+    #m.limits['a'] = (23, 25)#(10, 50)
+    #m.limits['b'] = (17, 19)#(20, 25)
+    #m.limits['e'] = (42, 46)#(20, 50)
+    #m.limits['g'] = (51, 53)#(20, 60)
+
+    m.limits['a'] = (10, 50)
+    m.limits['b'] = (20, 50)
+    m.limits['e'] = (10, 50)
+    m.limits['g'] = (20, 60)
+
+    # 900 md1
+    # 887 md2
+    # 525 md3
+    # 1359 mc
+    # 0.20000069944928628 tau
+    # 10993.90580476313 beta
+    # A 26  PS
+    # B 37  PSL
+    # E 14  PI
+    # G 44  PF
 
     m.errordef=Minuit.LEAST_SQUARES
     m.migrad()
@@ -166,24 +179,23 @@ for _ in range(n_events): # max 10000 with decays included, computationally expe
     exp_m = np.array([ # measured baryon masses
 
         # cascades sextet
-        # random(gauss_2578), # ground state
-        # random(gauss_2645), # star
-        # random(gauss_2923), # p-wave
-        # random(gauss_2938), # p-wave
-        # random(gauss_2965)  # p-wave
-        
+        random(gauss_2578), # ground state
+        random(gauss_2645), # star
+        random(gauss_2923), # p-wave
+        random(gauss_2938), # p-wave
+        random(gauss_2965), # p-wave
         
         # lambda            
         # random(gauss_2286),
-        random(gauss_2592),
-        random(gauss_2628),
-        random(gauss_2766),
+        # random(gauss_2592),
+        # random(gauss_2628),
+        # random(gauss_2766),
 
         # cascade anti-3plet
-        random(gauss_2469),
-        random(gauss_2792),        
-        random(gauss_2816), # this out alone, helps
-        random(gauss_2970)
+        random(gauss_2469),  # ground state
+        random(gauss_2792),  # p-wave
+        # random(gauss_2816),  # p-wave  this out alone, helps
+        random(gauss_2970)   # roper
         # random(gauss_3050)
     ])
     

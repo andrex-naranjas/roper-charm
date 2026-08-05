@@ -111,7 +111,7 @@ def states_mass_diquark(baryons):
         SU_tot   = np.array([ 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3, 10/3])
         HO_n     = np.array([    1,    1,    2,    2,    2,    2,    2,    2])
         SL       = np.array([    1,    1,    1,    1,    1,    1,    1,    1])
-        ModEx    = np.array(['grd','grd','lam','lam','lam','lam','lam','lam'])
+        ModEx    = np.array(['grd','grd','lam','lam','lam','lam','lam','rpl'])
         # sigma states
     elif(baryons=='sigmas'):
         state    = np.array(['sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig','sig'])
@@ -136,14 +136,14 @@ def states_mass_diquark(baryons):
         ModEx    = np.array(['grd','lam','lam','lam','lam','rpl'])
         # cascades anti-triplet states
     elif(baryons=='cascades_anti3'):        
-        state    = np.array(['tri','tri','tri','tri','tri','tri'])
-        J_tot    = np.array([  1/2,  1/2,  3/2,  3/2,  5/2,  1/2])
-        S_tot    = np.array([  1/2,  1/2,  1/2,  1/2,  1/2,  1/2])
-        L_tot    = np.array([    0,    1,    1,    2,    2,    0])
-        I_tot    = np.array([  1/2,  1/2,  1/2,  1/2,  1/2,  1/2])
-        SU_tot   = np.array([  4/3,  4/3,  4/3,  4/3,  4/3,  4/3])
-        HO_n     = np.array([    1,    2,    2,    3,    3,    2])
-        SL       = np.array([    0,    0,    0,    0,    0,    0])
-        ModEx    = np.array(['grd','lam','lam','lam','lam','rpl'])
+        state    = np.array(['tri','tri','tri','tri'])
+        J_tot    = np.array([  1/2,  1/2,  3/2,  1/2])
+        S_tot    = np.array([  1/2,  1/2,  1/2,  1/2])
+        L_tot    = np.array([    0,    1,    1,    0])
+        I_tot    = np.array([  1/2,  1/2,  1/2,  1/2])
+        SU_tot   = np.array([  4/3,  4/3,  4/3,  4/3])
+        HO_n     = np.array([    1,    2,    2,    2])
+        SL       = np.array([    0,    0,    0,    0])
+        ModEx    = np.array(['grd','lam','lam','rpl'])
 
     return state,J_tot,S_tot,L_tot,I_tot,SU_tot,HO_n,SL,ModEx
