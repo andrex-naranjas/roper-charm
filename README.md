@@ -33,7 +33,7 @@ To install the framework you need anaconda and git on a linux machine. In a term
 5. Minimal run:
   ```
   python3 ./scripts/roper_bootstrap_diquark.py
-  python3 ./scripts/print_results.py
+  python3 ./scripts/print_results.py baryon_name
   ```
 6. Check that your plots and tables are in the newly created directories
 
