@@ -44,8 +44,7 @@ class DecayWidths:
         m_mu = self.reduced_masses(baryons, md1, md2, md3, mc)
         channel_widths = ([])
         
-        alpha_lam = self.alphas(tau, m_mu)
-        print(alpha_lam)
+        alpha_lam = 0.5#self.alphas(tau, m_mu)
         alpha_rho = 1
 
         if gamma_val is None:
@@ -213,8 +212,8 @@ class DecayWidths:
             
             
     def set_gamma_val(self, bootstrap):
-        
         self.gamma_fit = 20.8 # this reproduces an specific decay width
+        self.gamma_fit = 17.25/np.pow(3.5, 0.5)
         self.gauss_gamma = np.random.normal(20.8, np.power( 1.47**2 + 4.44**2, 0.5) , 10000)
         if(bootstrap):
             self.gauss_gamma = np.random.normal(20.8, np.power( 1.5**2 + 2.0**2, 0.5) , 10000) # error 2, is arbitrary

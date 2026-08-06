@@ -24,18 +24,21 @@ double CharmDecayWidths::execute(double ma_avg_val, double mb_avg_val, double mc
 				  double la_val, double ja_val, double sl_val, double al_val, double ar_val,
 				  int baryon, int excMode, int prodDecay){  
 
-  // if(ma_avg_val<mb_avg_val+mc_avg_val) return 0.; //energy conservation
+  if(ma_avg_val<mb_avg_val+mc_avg_val) return 0.; //energy conservation
   // decay product masses
-  return 10; //test
   MA = ma_val;
   MB = mb_val;
   MC = mc_val;
-
+  //std::cout<<MA<<"   MA     "<<MB<<"    MB   "<<MC<<"    MC"<<std::endl;
+  //MA = 2.640;
+  //MB = 2.469;
+  //MC = 0.140;
+  
   // which baryon, mode, decay product
   baryonFlag = baryon;
   modeExcitation = excMode;
   decayProd  = prodDecay;
-  double alpha_rho = 0.,alpha_lam = 0.,alpha_mes = 0.,flav_coup= 0.;
+  double alpha_rho = 0.,alpha = 0.,alpha_lam = 0.,alpha_mes = 0.,flav_coup= 0.;
   double slf_val=0., sb_val=0., lb_val=0., jb_val=0.;
   double l1_val=0., l2_val=0.;
 
@@ -142,42 +145,58 @@ double CharmDecayWidths::execute(double ma_avg_val, double mb_avg_val, double mc
     //else if(decayProd==15) {slf_val=0.; sb_val=0.5; lb_val=0.0; jb_val=0.5; flav_coup = 1./3.; SC=1; diagram = 2;} //N+D*
   }
 
-  alpha_rho = ar_val;
-  alpha_lam = al_val;
-  alpha_mes = ALPHA_MES(diagram);
+  alpha = al_val; //new
+
   if(modeExcitation==5){l1_val=1.; l2_val=1.;}//for mixed states
   else{l1_val=0.; l2_val=0.;}
   
   //fetch quantum numbers and projections
-  SA = sa_val;      mSA = getMomentumProjections(SA);
-  LA = la_val;      mLA = getMomentumProjections(LA);
+  // test
+  sb_val = 0.5;
+  lb_val = 0;
+  jb_val = 0.5;
+  sl_val = 1;
+  SDQ = 1;          mDQ = getMomentumProjections(SDQ);
+  SSP = 1;          mSP = getMomentumProjections(SSP);
+  SSC = 0;          mSC = getMomentumProjections(SSC);
+  S   = 1;          m   = getMomentumProjections(S);
+
+  
   JA = ja_val;      mJA = getMomentumProjections(JA);
+  LA = la_val;      mLA = getMomentumProjections(LA);
+  SA = sa_val;      mSA = getMomentumProjections(SA);
+
   SB = sb_val;      mSB = getMomentumProjections(SB);
   LB = lb_val;      mLB = getMomentumProjections(LB);
   JB = jb_val;      mJB = getMomentumProjections(JB);
-  
-  slight = sl_val;  m12 = getMomentumProjections(slight);
-  slight = sl_val;  m23 = getMomentumProjections(slight);
-  slightf= slf_val; m24 = getMomentumProjections(slightf);
-  L1 = l1_val;      mL1 = getMomentumProjections(L1);
-  L2 = l2_val;      mL2 = getMomentumProjections(L2);
 
-  mSC = getMomentumProjections(SC);  
-  //values are the same for all states (at least for now!) 
-  s  = 1.0;   m   = getMomentumProjections(s);
   s1 = 0.5;   m1  = getMomentumProjections(s1);
-  s2 = 0.5;   m2  = getMomentumProjections(s2);
   s3 = 0.5;   m3  = getMomentumProjections(s3);
   s4 = 0.5;   m4  = getMomentumProjections(s4);
-  s5 = 0.5;   m5  = getMomentumProjections(s5);
+  
 
+  // CHECK IF we NEED these
+  //slight = sl_val;  m12 = getMomentumProjections(slight);
+  //slight = sl_val;  m23 = getMomentumProjections(slight); // initial diquark
+  //slightf= sl_val;  m24 = getMomentumProjections(slightf); // final diquark
+  //L1 = l1_val;      mL1 = getMomentumProjections(L1);
+  //L2 = l2_val;      mL2 = getMomentumProjections(L2);
+  // mSC = getMomentumProjections(SC);  
+  // s  = 1.0;   m   = getMomentumProjections(s);
+  // s1 = 0.5;   m1  = getMomentumProjections(s1);
+  // s2 = 0.5;   m2  = getMomentumProjections(s2);
+  // s3 = 0.5;   m3  = getMomentumProjections(s3);
+  // s4 = 0.5;   m4  = getMomentumProjections(s4);
+  // s5 = 0.5;   m5  = getMomentumProjections(s5);
+
+  alpha_mes = ALPHA_MES(diagram);
   double EB_value = EB(MA,MB,MC);
   double k_value; k_value = K(EB_value, MB);
   double EWCC_value = EWCC(MA, MB, MC);
   
   double sum_value  = 0.;
-  if(diagram==1) sum_value  = ANGULAR_SUM(alpha_rho, alpha_lam, alpha_mes, k_value);
-  else if(diagram==2) sum_value = ANGULAR_SUM_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+  if(diagram==1) sum_value  = ANGULAR_SUM_DI(alpha, alpha_mes, k_value);
+  else if(diagram==2) sum_value = 1;//ANGULAR_SUM_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
 
   double fi2_value  = FI2(EB_value, EWCC_value, MA, k_value);
   double decayWidth = DecayWidth(flav_coup, gamma, fi2_value, sum_value);
@@ -192,251 +211,82 @@ double CharmDecayWidths::DecayWidth(double flav_coup, double gamma, double fi2_v
 }
 
 double CharmDecayWidths::ALPHA_MES(int diagram){
-  if(diagram == 1) return 0.46;
+  if(diagram == 1) return 0.4;
   else return 0.6;
 }
 
-double CharmDecayWidths::ANGULAR_SUM(double alpha_rho, double alpha_lam,
- 				     double alpha_mes, double k_value){
+double CharmDecayWidths::ClebschGordan(WignerSymbols *m_wigner,
+				       double l1, double l2, double l3,
+				       double m1, double m2, double m3){
+  double coef = std::pow(-1.0, l2-l1-m3) * std::pow(2.0*l3 + 1.0, 0.5);
+  double three_j = m_wigner->wigner3j(l1, l2, l3, m1, m2, (-1.0)*m3);
+  return coef * three_j;
+}
+
+
+double CharmDecayWidths::ANGULAR_SUM_DI(double alpha,
+					double alpha_mes, double k_value){
   
   WignerSymbols *m_wigner = new WignerSymbols();
   double outerSum = 0;
   double finalIntegral1=0., finalIntegral2=0.; //, finalIntegral3=0.;
   double dummy=0;
-  double delta1=0, delta2=0, delta_mix=1.;;
-  double cmix_d1_a=0,cmix_d1_b=0;
-  double cmix_d2_a=0,cmix_d2_b=0,cmix_d2_c=0;
+  double delta1=0, delta2=0;
 
   if(modeExcitation == 0){//GROUND
-    finalIntegral1=I01B0TOT_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral1=I010_DI_GS(k_value, alpha, alpha_mes);
   }else if(modeExcitation == 1 && LA==1){//P-WAVE, LAMBDA
-    finalIntegral1=I01B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
-  }else if(modeExcitation == 2 && LA==1){//P-WAVE, RHO
-    finalIntegral1=I01B0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
-  }else if(modeExcitation == 1 && LA==2){//D-WAVE, LAMBDA
-    finalIntegral1=I01B0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
-  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
-    finalIntegral1=I01B0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral1=1;//I01B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=1;//I02B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
   }else if(modeExcitation == 3){//RADIAL, LAMBDA
-    finalIntegral1=I01B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
-  }else if(modeExcitation == 4){//RADIAL, RHO
-    finalIntegral1=I01B0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
-  }else if(modeExcitation == 5){//MIXED
-    finalIntegral1=I01B0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
-    finalIntegral2=I02B0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
-    cmix_d1_a = std::pow(6,0.5)/(2*std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2));
-    cmix_d1_b = 3.*(ARO5_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO6_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value));
-    cmix_d2_a = ARO5_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO4_MIXED(alpha_lam, alpha_mes);
-    cmix_d2_b = ARO6_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO1_MIXED(alpha_lam, alpha_mes);
-    cmix_d2_c = (BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 2)) *
-      ARO1_MIXED(alpha_lam, alpha_mes)* ARO4_MIXED(alpha_lam, alpha_mes);
+    finalIntegral1=1;//I01B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=1;//I02B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
   }
-  
+
   for(int iMJA = 0; iMJA<(int)mJA.size(); iMJA++){
     
     double innerSum = 0;
     for(int iMLA = 0; iMLA<(int)mLA.size(); iMLA++)
-      for(int iML1 = 0; iML1<(int)mL1.size(); iML1++)
-	for(int iML2 = 0; iML2<(int)mL2.size(); iML2++)
-	  for(int iMSA = 0; iMSA<(int)mSA.size(); iMSA++)
-	    for(int iM = 0; iM<(int)m.size(); iM++)
-	      for(int iM24 = 0; iM24<(int)m24.size(); iM24++)
-		for(int iM1 = 0; iM1<(int)m1.size(); iM1++)
-		  for(int iMSB = 0; iMSB<(int)mSB.size(); iMSB++)
-		    for(int iM3 = 0; iM3<(int)m3.size(); iM3++)
-		      for(int iM5 = 0; iM5<(int)m5.size(); iM5++)
+      for(int iMSA = 0; iMSA<(int)mSA.size(); iMSA++)
+	for(int iMSB = 0; iMSB<(int)mSB.size(); iMSB++)
+	  for(int iM1 = 0; iM1<(int)m1.size(); iM1++)
+	    for(int iM3 = 0; iM3<(int)m3.size(); iM3++)
+	      for(int iM4 = 0; iM4<(int)m4.size(); iM4++)
+		for(int iMDQ = 0; iMDQ<(int)mDQ.size(); iMDQ++)   
+		  for(int iMLB = 0;  iMLB<(int)mLB.size(); iMLB++)
+		    for(int iMJB = 0;  iMJB<(int)mJB.size(); iMJB++)
+		      for(int iMSP = 0; iMSP<(int)mSP.size(); iMSP++)
 			for(int iMSC = 0; iMSC<(int)mSC.size(); iMSC++)
-			  for(int iM23 = 0; iM23<(int)m23.size(); iM23++)
-			    for(int iM4 = 0; iM4<(int)m4.size(); iM4++)
-			      for(int iM2 = 0; iM2<(int)m2.size(); iM2++){
-				delta1=0.; delta2=0.; delta_mix=1.0;
-				if(modeExcitation == 0){//GROUND
-				  delta1 = KroneckerDelta(0, m.at(iM));
-				}else if(modeExcitation == 1 && LA == 1){//P-WAVE, LAMBDA
-				  delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
-				  delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
-				}else if(modeExcitation == 2 && LA ==1){//P-WAVE, RHO
-				  delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
-				  delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
-				}else if((modeExcitation == 1 || modeExcitation == 2)  && LA == 2){//D-WAVE,same for LAMBDA & RHO
-				  delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), 0);
-				  delta2 = (m_wigner->wigner3j(1, 1, LA, m.at(iM), 0, (-1.0)*m.at(iM))) * std::pow(-1.0, (-1.0)*m.at(iM)) *
-				    std::pow((2*LA+1),0.5) * KroneckerDelta(m.at(iM), mLA.at(iMLA));
-				}else if(modeExcitation == 3 || modeExcitation == 4){//RADIAL,same for LAMBDA & RHO
-				  delta1 = KroneckerDelta(m.at(iM), 0);
-				  delta2 = KroneckerDelta(m.at(iM), 0);}
-				else if(modeExcitation == 5){// MIXED states
-				  delta1 = (cmix_d1_a*KroneckerDelta(m.at(iM), mL2.at(iML2)) + cmix_d1_b*KroneckerDelta(m.at(iM),0)*KroneckerDelta(0, mL2.at(iML2)))*KroneckerDelta(mL1.at(iML1), 0);
-				  delta2 = cmix_d2_a*KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mL1.at(iML1), mL2.at(iML2)) +
-				    cmix_d2_b*KroneckerDelta(0, mL2.at(iML2))*KroneckerDelta(mL1.at(iML1), m.at(iM)) + cmix_d2_c*KroneckerDelta(mL1.at(iML1), 0)*KroneckerDelta(m.at(iM), mL2.at(iML2));
-				  delta_mix = m_wigner->wigner3j(1, 1, LA, mL1.at(iML1), mL2.at(iML2), (-1.0)*mLA.at(iMLA)) * std::pow(-1.0, (-1.0)*mLA.at(iMLA) ) * std::pow(2*LA+1,0.5);
-				}
-				
-				if(delta1!=0 || delta2!=0){
-				  dummy = (finalIntegral1*delta1 + finalIntegral2*delta2)*delta_mix*
-				    m_wigner->wigner3j(LA, SA, JA, mLA.at(iMLA), mSA.at(iMSA), (-1.0)*mJA.at(iMJA))*
-				    m_wigner->wigner3j(1, 1, 0, m.at(iM), (-1.0)*m.at(iM), 0)*
-				    m_wigner->wigner3j(slightf, 0.5, SB, m24.at(iM24), m1.at(iM1), (-1.0)*mSB.at(iMSB))*
-				    m_wigner->wigner3j(0.5, 0.5, SC, m3.at(iM3), m5.at(iM5), (-1.0)*mSC.at(iMSC))*
-				    m_wigner->wigner3j(slight, 0.5, SA, m23.at(iM23), m1.at(iM1), (-1.0)*mSA.at(iMSA))*
-				    m_wigner->wigner3j(0.5, 0.5, 1, m4.at(iM4), m5.at(iM5), m.at(iM))*
-				    m_wigner->wigner3j(0.5, 0.5, slightf, m2.at(iM2), m4.at(iM4), (-1.0)*m24.at(iM24))*
-				    m_wigner->wigner3j(0.5,0.5,slight, m2.at(iM2), m3.at(iM3), (-1.0)*m23.at(iM23))*
-				    std::pow(3 * (2*JA+1) * (2*slight+1) * (2*slightf+1) * (2*SA+1) * (2*SB+1) * (2*SC+1),0.5)*
-				    std::pow(-1.0,SA-LA-mJA.at(iMJA))*
-				    std::pow(-1.0,1+m.at(iM)-mSA.at(iMSA)-mSB.at(iMSB)-slight-slightf-m23.at(iM23)-m24.at(iM24)-mSC.at(iMSC));
-				}else dummy = 0;
-				
-				innerSum+=dummy;
-				dummy = 0;
-			      }
-    outerSum += std::pow(innerSum,2);        
+			  for(int iM = 0; iM<(int)m.size(); iM++){
+			    delta1=0.; delta2=0.;
+			    if(modeExcitation == 0){//GROUND
+			      delta1 = KroneckerDelta(0, m.at(iM));
+			    }else if(modeExcitation == 1 && LA == 1){//P-WAVE, LAMBDA
+			      delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
+			      delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
+			    }else if(modeExcitation == 3 || modeExcitation == 4){//RADIAL,same for LAMBDA & RHO
+			      delta1 = KroneckerDelta(m.at(iM), 0);
+			      delta2 = KroneckerDelta(m.at(iM), 0);
+			    }			  
+			    if(delta1!=0 || delta2!=0){
+			      dummy = (finalIntegral1*delta1)* // + finalIntegral2*delta2
+				ClebschGordan(m_wigner, LB,  SB,  JB,  mLB.at(iMLB),   mSB.at(iMSB),   mJB.at(iMJB))*
+				ClebschGordan(m_wigner, LA,  SA,  JA,  mLA.at(iMLA),   mSA.at(iMSA),   mJA.at(iMJA))*
+				ClebschGordan(m_wigner, 1,    1,  0,  m.at(iM),  mSP.at(iMSP),  0)*//ClebschGordan(m_wigner, 1,    1,  0,  m.at(iM),  (-1.0)*m.at(iM),  0)*
+				ClebschGordan(m_wigner, 0.5,  SDQ,  SB,  m3.at(iM3), mDQ.at(iMDQ),  mSB.at(iMSB))*
+				ClebschGordan(m_wigner, 0.5,  SDQ,  SA,  m1.at(iM1), mDQ.at(iMDQ),  mSA.at(iMSA))*
+				ClebschGordan(m_wigner, 0.5,     0.5,  SC,  m1.at(iM1), m4.at(iM4),    mSC.at(iMSC))*
+				ClebschGordan(m_wigner, 0.5,     0.5,  1,   m3.at(iM3), m4.at(iM4),    mSP.at(iMSP));//ClebschGordan( 0.5, 0.5, 1, m3.at(iM3), m4.at(iM4),-1.0*m.at(iM));
+			    }else dummy = 0;
+			    innerSum+=dummy;
+			    dummy = 0;
+			  }
+    outerSum += std::pow(innerSum,2);
   }
   delete m_wigner;
   return outerSum;
 }
 
-double CharmDecayWidths::ANGULAR_SUM_SECOND(double alpha_rho, double alpha_lam,
-					    double alpha_mes, double k_value){
-  
-  if(modeExcitation == 0 ||  // GROUND, RADIAL RHO do not contribute
-     modeExcitation == 4 ) return 0.;
-  
-  WignerSymbols *m_wigner = new WignerSymbols();
-  double outerSum = 0;
-  double finalIntegral1=0., finalIntegral2=0.;
-  double dummy=0;
-  double delta1=0, delta2=0, factor=0;
-
-  if(modeExcitation == 1 && LA==1){//P-WAVE, LAMBDA
-    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4 || baryonFlag==5) return 0.;
-    if(baryonFlag==3){
-      if(decayProd>=19 && decayProd<=22){ // sigmas decay only through
-	finalIntegral1=I01B0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-    }else return 0.;}
-    
-  }else if(modeExcitation == 1 && LA==2){//D-WAVE, LAMBDA    
-    if(baryonFlag==2){
-      if(decayProd>=25 && decayProd<=28){
-	finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      }
-    }else if(baryonFlag==5){
-      if(decayProd>=25 && decayProd<=28){
-	finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      }
-    }else{
-      finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-    }
-    
-  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
-    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4 || baryonFlag==5) return 0.;
-    if(baryonFlag==3){
-      if(decayProd>=25 && decayProd<=26){ // sigmas decay only through 
-      finalIntegral1=I01B0TOT_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      finalIntegral2=0;
-    }else return 0;}
-        
-  }else if(modeExcitation == 3){//RADIAL, LAMBDA
-    if(baryonFlag==2){
-      if(decayProd>=25 && decayProd<=28){
-	finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      }
-    }else if(baryonFlag==5){
-      if(decayProd>=25 && decayProd<=28){
-	finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      }
-    }else{
-      finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-    }
-
-  }else if(modeExcitation == 5){//MIXED
-    
-    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4) return 0.;
-
-    if(baryonFlag==3){
-      if(decayProd>=23 && decayProd<=24){ // sigmas decay only through
-	finalIntegral1=I01B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-      }else return 0;}
-    
-    if(baryonFlag==5){
-      if(decayProd==32){
-	finalIntegral1=I01B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-	finalIntegral2=I02B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
-    }else return 0;}
-    
-  }
-  
-  for(int iMJA = 0; iMJA<(int)mJA.size(); iMJA++){
-    for(int iMJB = 0; iMJB<(int)mJB.size(); iMJB++){
-    
-      double innerSum = 0;
-      for(int iMLA = 0; iMLA<(int)mLA.size(); iMLA++)
-	for(int iMSA = 0; iMSA<(int)mSA.size(); iMSA++)
-	  for(int iM = 0; iM<(int)m.size(); iM++)
-	    for(int iMLB = 0; iMLB<(int)mLB.size(); iMLB++)
-	      for(int iMSB = 0; iMSB<(int)mSB.size(); iMSB++)
-		for(int iMSC = 0; iMSC<(int)mSC.size(); iMSC++)
-		  for(int iM3 = 0; iM3<(int)m3.size(); iM3++)
-		    for(int iM4 = 0; iM4<(int)m4.size(); iM4++)
-		      for(int iM5 = 0; iM5<(int)m5.size(); iM5++)
-			for(int iM12 = 0; iM12<(int)m12.size(); iM12++){
-			  delta1=0.; delta2=0.;				
-			  if(modeExcitation == 1 && LA == 1){//P-WAVE, LAMBDA
-			    delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
-			    delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
-			  }else if((modeExcitation == 1 || modeExcitation == 2)  && LA == 2){//D-WAVE,same for LAMBDA & RHO
-			    delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), mLB.at(iMLB));
-			    delta2 = (m_wigner->wigner3j(1, 1, LA, m.at(iM), 0, (-1.0)*m.at(iM))) * std::pow(-1.0, (-1.0)*m.at(iM)) *
-			      std::pow((2*LA+1),0.5) * KroneckerDelta(m.at(iM), mLA.at(iMLA));
-			  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
-			    delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), mLB.at(iMLB));
-			    delta2=0;
-			  }else if(modeExcitation == 3 || modeExcitation == 4){//RADIAL,same for LAMBDA & RHO
-			    delta1 = KroneckerDelta(m.at(iM), 0);
-			    delta2 = KroneckerDelta(m.at(iM), 0);
-			  }else if(modeExcitation == 5 ){//MIXED stated
-			    factor = m_wigner->wigner3j(1, 1, LA, m.at(iM), mLB.at(iMLB), (-1.0)*mLA.at(iMLA) ) * std::pow(-1, (-1.0)*mLA.at(iMLA)) * std::pow(2*LA + 1, 0.5);
-			    delta1 = KroneckerDelta(m.at(iM), 0) * factor;
-			    delta2 = factor;}
-		    
-			  if(delta1!=0 || delta2!=0){
-			    dummy = (finalIntegral1*delta1 + finalIntegral2*delta2)*
-			      m_wigner->wigner3j(LA, SA, JA, mLA.at(iMLA), mSA.at(iMSA), (-1.0)*mJA.at(iMJA))*
-			      m_wigner->wigner3j(LB, SB, JB, mLB.at(iMLB), mSB.at(iMSB), (-1.0)*mJB.at(iMJB))*
-			      m_wigner->wigner3j(1, 1, 0, m.at(iM), (-1.0)*m.at(iM), 0)*
-			      m_wigner->wigner3j(slight, 0.5, SB, m12.at(iM12), m4.at(iM4), (-1.0)*mSB.at(iMSB))*
-			      m_wigner->wigner3j(0.5, 0.5, SC, m3.at(iM3), m5.at(iM5), (-1.0)*mSC.at(iMSC))*
-			      m_wigner->wigner3j(slight, 0.5, SA, m12.at(iM12), m3.at(iM3), (-1.0)*mSA.at(iMSA))*
-			      m_wigner->wigner3j(0.5, 0.5, 1, m4.at(iM4), m5.at(iM5), m.at(iM))*				   
-			      std::pow(3 * (2*JA+1) * (2*SA+1) * (2*JB+1)* (2*SB+1) * (2*SC+1), 0.5)*
-			      std::pow(-1.0,SA-LA-mJA.at(iMJA))*
-			      std::pow(-1.0,SB-LB-mJB.at(iMJB))*
-			      std::pow(-1.0,1+m.at(iM)-mSA.at(iMSA)-mSB.at(iMSB)-mSC.at(iMSC));
-			  }else dummy = 0;
-		      
-			  innerSum+=dummy;
-			  dummy = 0;
-			}
-      outerSum += std::pow(innerSum,2); 
-    }
-  }
-  delete m_wigner;
-  return outerSum;
-}
 
 std::vector<double> CharmDecayWidths::getMomentumProjections(double j_angular){
   //gets the m projections "m_projection" for a given angular momentum "j_angular"
@@ -476,6 +326,61 @@ double CharmDecayWidths::FI2(double EB, double EWCC, double MA, double k_value){
   double value = (2*(pi_val)*k_value*(EB * EWCC)) / MA ; 
   return value;
 }
+
+//GROUND STATES -> GROUND STATES (orbital ground, spin 3/2)
+// new functions for diquark
+double CharmDecayWidths::CBARIN_DI_GS(double alpha){
+  double value1 = pi_val*pow(alpha, 2);
+  return 1./std::pow(value1, 0.75);
+}
+
+double CharmDecayWidths::CBARFIN_DI_GS(double alpha){
+  double value1 = pi_val*pow(alpha, 2);
+  return 1./std::pow(value1, 0.75);
+}
+
+double CharmDecayWidths::CMESON_DI_GS(double alpha_mes){
+  double value1 = pi_val*pow(alpha_mes, 2);
+  return 1./std::pow(value1, 0.75);
+}
+
+double CharmDecayWidths::C0_DI_GS(double alpha, double alpha_mes){
+  double value1 = CBARIN_DI_GS(alpha) * CBARIN_DI_GS(alpha) * CMESON_DI_GS(alpha_mes);
+  return value1;
+}
+
+double CharmDecayWidths::C1_DI_GS(double alpha, double alpha_mes){
+  double value1 = 1./std::pow(alpha,2) + 1./std::pow(alpha_mes, 2);
+  return 0.5*value1;
+}
+
+double CharmDecayWidths::BETA1_DI_GS(double alpha, double alpha_mes){
+  double value1 = 2./std::pow(alpha,2) + 1./std::pow(alpha_mes, 2);
+  return 0.5*value1;
+}
+
+double CharmDecayWidths::F00_DI_GS(double k_value, double alpha, double alpha_mes){
+  double value1 = -1.*std::pow(k_value, 2)*C1_DI_GS(alpha, alpha_mes);
+  double value2 = std::pow(k_value, 2)*std::pow(C1_DI_GS(alpha, alpha_mes), 2);
+  double value3 = value2/BETA1_DI_GS(alpha, alpha_mes);
+  return value1 + value3;
+}
+
+//Here we have to correct...
+double CharmDecayWidths::ARO0_DI_GS(double k_value, double alpha, double alpha_mes){
+  double value1 = C1_DI_GS(alpha, alpha_mes)/BETA1_DI_GS(alpha, alpha_mes);
+  return (2 - value1)/pow(BETA1_DI_GS(alpha, alpha_mes), 1.5)*k_value;
+}
+
+double CharmDecayWidths::I010_DI_GS(double k_value, double alpha, double alpha_mes){
+  double value0 = ARO0_DI_GS(k_value, alpha, alpha_mes);
+  double value1 = C0_DI_GS(alpha, alpha_mes)*std::exp(F00_DI_GS(k_value, alpha, alpha_mes));
+  return std::pow(0.75/pi_val, 0.5)*value0*value1;
+}
+
+
+// new First case ends here
+
 
 double CharmDecayWidths::CBARIN(double alpha_rho, double alpha_lam){
   double value1 = std::pow(3,0.75);
@@ -1650,5 +1555,256 @@ double CharmDecayWidths::I02B0TOT_RADIAL_SECOND(double alpha_rho, double alpha_l
   double value2 = I02B0_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
   return value1*value2;
 }
+
+
+
+
+
+double CharmDecayWidths::ANGULAR_SUM(double alpha_rho, double alpha_lam,
+ 				     double alpha_mes, double k_value){
+  
+  WignerSymbols *m_wigner = new WignerSymbols();
+  double outerSum = 0;
+  double finalIntegral1=0., finalIntegral2=0.; //, finalIntegral3=0.;
+  double dummy=0;
+  double delta1=0, delta2=0, delta_mix=1.;;
+  double cmix_d1_a=0,cmix_d1_b=0;
+  double cmix_d2_a=0,cmix_d2_b=0,cmix_d2_c=0;
+
+  if(modeExcitation == 0){//GROUND
+    finalIntegral1=I01B0TOT_GROUND(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 1 && LA==1){//P-WAVE, LAMBDA
+    finalIntegral1=I01B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_PWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 2 && LA==1){//P-WAVE, RHO
+    finalIntegral1=I01B0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_PWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 1 && LA==2){//D-WAVE, LAMBDA
+    finalIntegral1=I01B0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_DWAVE(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
+    finalIntegral1=I01B0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_DWAVE_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 3){//RADIAL, LAMBDA
+    finalIntegral1=I01B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_RADIAL(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 4){//RADIAL, RHO
+    finalIntegral1=I01B0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_RADIAL_RHO(alpha_rho, alpha_lam, alpha_mes, k_value);
+  }else if(modeExcitation == 5){//MIXED
+    finalIntegral1=I01B0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
+    finalIntegral2=I02B0TOT_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value);
+    cmix_d1_a = std::pow(6,0.5)/(2*std::pow(ARO0_MIXED(alpha_lam, alpha_mes),2));
+    cmix_d1_b = 3.*(ARO5_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO6_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value));
+    cmix_d2_a = ARO5_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO4_MIXED(alpha_lam, alpha_mes);
+    cmix_d2_b = ARO6_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value) * ARO1_MIXED(alpha_lam, alpha_mes);
+    cmix_d2_c = (BRO1_MIXED(alpha_rho, alpha_lam, alpha_mes, k_value)/std::pow(ARO2_MIXED(alpha_rho, alpha_lam, alpha_mes), 2)) *
+      ARO1_MIXED(alpha_lam, alpha_mes)* ARO4_MIXED(alpha_lam, alpha_mes);
+  }
+  
+  for(int iMJA = 0; iMJA<(int)mJA.size(); iMJA++){
+    
+    double innerSum = 0;
+    for(int iMLA = 0; iMLA<(int)mLA.size(); iMLA++)
+      for(int iML1 = 0; iML1<(int)mL1.size(); iML1++)
+	for(int iML2 = 0; iML2<(int)mL2.size(); iML2++)
+	  for(int iMSA = 0; iMSA<(int)mSA.size(); iMSA++)
+	    for(int iM = 0; iM<(int)m.size(); iM++)
+	      for(int iM24 = 0; iM24<(int)m24.size(); iM24++)
+		for(int iM1 = 0; iM1<(int)m1.size(); iM1++)
+		  for(int iMSB = 0; iMSB<(int)mSB.size(); iMSB++)
+		    for(int iM3 = 0; iM3<(int)m3.size(); iM3++)
+		      for(int iM5 = 0; iM5<(int)m5.size(); iM5++)
+			for(int iMSC = 0; iMSC<(int)mSC.size(); iMSC++)
+			  for(int iM23 = 0; iM23<(int)m23.size(); iM23++)
+			    for(int iM4 = 0; iM4<(int)m4.size(); iM4++)
+			      for(int iM2 = 0; iM2<(int)m2.size(); iM2++){
+				delta1=0.; delta2=0.; delta_mix=1.0;
+				if(modeExcitation == 0){//GROUND
+				  delta1 = KroneckerDelta(0, m.at(iM));
+				}else if(modeExcitation == 1 && LA == 1){//P-WAVE, LAMBDA
+				  delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
+				  delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
+				}else if(modeExcitation == 2 && LA ==1){//P-WAVE, RHO
+				  delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
+				  delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
+				}else if((modeExcitation == 1 || modeExcitation == 2)  && LA == 2){//D-WAVE,same for LAMBDA & RHO
+				  delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), 0);
+				  delta2 = (m_wigner->wigner3j(1, 1, LA, m.at(iM), 0, (-1.0)*m.at(iM))) * std::pow(-1.0, (-1.0)*m.at(iM)) *
+				    std::pow((2*LA+1),0.5) * KroneckerDelta(m.at(iM), mLA.at(iMLA));
+				}else if(modeExcitation == 3 || modeExcitation == 4){//RADIAL,same for LAMBDA & RHO
+				  delta1 = KroneckerDelta(m.at(iM), 0);
+				  delta2 = KroneckerDelta(m.at(iM), 0);}
+				else if(modeExcitation == 5){// MIXED states
+				  delta1 = (cmix_d1_a*KroneckerDelta(m.at(iM), mL2.at(iML2)) + cmix_d1_b*KroneckerDelta(m.at(iM),0)*KroneckerDelta(0, mL2.at(iML2)))*KroneckerDelta(mL1.at(iML1), 0);
+				  delta2 = cmix_d2_a*KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mL1.at(iML1), mL2.at(iML2)) +
+				    cmix_d2_b*KroneckerDelta(0, mL2.at(iML2))*KroneckerDelta(mL1.at(iML1), m.at(iM)) + cmix_d2_c*KroneckerDelta(mL1.at(iML1), 0)*KroneckerDelta(m.at(iM), mL2.at(iML2));
+				  delta_mix = m_wigner->wigner3j(1, 1, LA, mL1.at(iML1), mL2.at(iML2), (-1.0)*mLA.at(iMLA)) * std::pow(-1.0, (-1.0)*mLA.at(iMLA) ) * std::pow(2*LA+1,0.5);
+				}
+				
+				if(delta1!=0 || delta2!=0){
+				  dummy = (finalIntegral1*delta1 + finalIntegral2*delta2)*delta_mix*
+				    m_wigner->wigner3j(LA, SA, JA, mLA.at(iMLA), mSA.at(iMSA), (-1.0)*mJA.at(iMJA))*
+				    m_wigner->wigner3j(1, 1, 0, m.at(iM), (-1.0)*m.at(iM), 0)*
+				    m_wigner->wigner3j(slightf, 0.5, SB, m24.at(iM24), m1.at(iM1), (-1.0)*mSB.at(iMSB))*
+				    m_wigner->wigner3j(0.5, 0.5, SC, m3.at(iM3), m5.at(iM5), (-1.0)*mSC.at(iMSC))*
+				    m_wigner->wigner3j(slight, 0.5, SA, m23.at(iM23), m1.at(iM1), (-1.0)*mSA.at(iMSA))*
+				    m_wigner->wigner3j(0.5, 0.5, 1, m4.at(iM4), m5.at(iM5), m.at(iM))*
+				    m_wigner->wigner3j(0.5, 0.5, slightf, m2.at(iM2), m4.at(iM4), (-1.0)*m24.at(iM24))*
+				    m_wigner->wigner3j(0.5,0.5,slight, m2.at(iM2), m3.at(iM3), (-1.0)*m23.at(iM23))*
+				    std::pow(3 * (2*JA+1) * (2*slight+1) * (2*slightf+1) * (2*SA+1) * (2*SB+1) * (2*SC+1),0.5)*
+				    std::pow(-1.0,SA-LA-mJA.at(iMJA))*
+				    std::pow(-1.0,1+m.at(iM)-mSA.at(iMSA)-mSB.at(iMSB)-slight-slightf-m23.at(iM23)-m24.at(iM24)-mSC.at(iMSC));
+				}else dummy = 0;
+				
+				innerSum+=dummy;
+				dummy = 0;
+			      }
+    outerSum += std::pow(innerSum,2);        
+  }
+  delete m_wigner;
+  return outerSum;
+}
+
+double CharmDecayWidths::ANGULAR_SUM_SECOND(double alpha_rho, double alpha_lam,
+					    double alpha_mes, double k_value){
+  
+  if(modeExcitation == 0 ||  // GROUND, RADIAL RHO do not contribute
+     modeExcitation == 4 ) return 0.;
+  
+  WignerSymbols *m_wigner = new WignerSymbols();
+  double outerSum = 0;
+  double finalIntegral1=0., finalIntegral2=0.;
+  double dummy=0;
+  double delta1=0, delta2=0, factor=0;
+
+  if(modeExcitation == 1 && LA==1){//P-WAVE, LAMBDA
+    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4 || baryonFlag==5) return 0.;
+    if(baryonFlag==3){
+      if(decayProd>=19 && decayProd<=22){ // sigmas decay only through
+	finalIntegral1=I01B0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_PWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+    }else return 0.;}
+    
+  }else if(modeExcitation == 1 && LA==2){//D-WAVE, LAMBDA    
+    if(baryonFlag==2){
+      if(decayProd>=25 && decayProd<=28){
+	finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      }
+    }else if(baryonFlag==5){
+      if(decayProd>=25 && decayProd<=28){
+	finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      }
+    }else{
+      finalIntegral1=I01B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      finalIntegral2=I02B0TOT_DWAVE_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+    }
+    
+  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
+    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4 || baryonFlag==5) return 0.;
+    if(baryonFlag==3){
+      if(decayProd>=25 && decayProd<=26){ // sigmas decay only through 
+      finalIntegral1=I01B0TOT_DWAVE_RHO_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      finalIntegral2=0;
+    }else return 0;}
+        
+  }else if(modeExcitation == 3){//RADIAL, LAMBDA
+    if(baryonFlag==2){
+      if(decayProd>=25 && decayProd<=28){
+	finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      }
+    }else if(baryonFlag==5){
+      if(decayProd>=25 && decayProd<=28){
+	finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      }
+    }else{
+      finalIntegral1=I01B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      finalIntegral2=I02B0TOT_RADIAL_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+    }
+
+  }else if(modeExcitation == 5){//MIXED
+    
+    if(baryonFlag==1 || baryonFlag==2 || baryonFlag==4) return 0.;
+
+    if(baryonFlag==3){
+      if(decayProd>=23 && decayProd<=24){ // sigmas decay only through
+	finalIntegral1=I01B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+      }else return 0;}
+    
+    if(baryonFlag==5){
+      if(decayProd==32){
+	finalIntegral1=I01B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+	finalIntegral2=I02B0TOT_MIXED_SECOND(alpha_rho, alpha_lam, alpha_mes, k_value);
+    }else return 0;}
+    
+  }
+  
+  for(int iMJA = 0; iMJA<(int)mJA.size(); iMJA++){
+    for(int iMJB = 0; iMJB<(int)mJB.size(); iMJB++){
+    
+      double innerSum = 0;
+      for(int iMLA = 0; iMLA<(int)mLA.size(); iMLA++)
+	for(int iMSA = 0; iMSA<(int)mSA.size(); iMSA++)
+	  for(int iM = 0; iM<(int)m.size(); iM++)
+	    for(int iMLB = 0; iMLB<(int)mLB.size(); iMLB++)
+	      for(int iMSB = 0; iMSB<(int)mSB.size(); iMSB++)
+		for(int iMSC = 0; iMSC<(int)mSC.size(); iMSC++)
+		  for(int iM3 = 0; iM3<(int)m3.size(); iM3++)
+		    for(int iM4 = 0; iM4<(int)m4.size(); iM4++)
+		      for(int iM5 = 0; iM5<(int)m5.size(); iM5++)
+			for(int iM12 = 0; iM12<(int)m12.size(); iM12++){
+			  delta1=0.; delta2=0.;				
+			  if(modeExcitation == 1 && LA == 1){//P-WAVE, LAMBDA
+			    delta1 = KroneckerDelta(m.at(iM), 0)*KroneckerDelta(mLA.at(iMLA), 0);
+			    delta2 = KroneckerDelta(m.at(iM), mLA.at(iMLA));
+			  }else if((modeExcitation == 1 || modeExcitation == 2)  && LA == 2){//D-WAVE,same for LAMBDA & RHO
+			    delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), mLB.at(iMLB));
+			    delta2 = (m_wigner->wigner3j(1, 1, LA, m.at(iM), 0, (-1.0)*m.at(iM))) * std::pow(-1.0, (-1.0)*m.at(iM)) *
+			      std::pow((2*LA+1),0.5) * KroneckerDelta(m.at(iM), mLA.at(iMLA));
+			  }else if(modeExcitation == 2 && LA==2){//D-WAVE, RHO
+			    delta1 = KroneckerDelta(m.at(iM), 0) * KroneckerDelta(mLA.at(iMLA), mLB.at(iMLB));
+			    delta2=0;
+			  }else if(modeExcitation == 3 || modeExcitation == 4){//RADIAL,same for LAMBDA & RHO
+			    delta1 = KroneckerDelta(m.at(iM), 0);
+			    delta2 = KroneckerDelta(m.at(iM), 0);
+			  }else if(modeExcitation == 5 ){//MIXED stated
+			    factor = m_wigner->wigner3j(1, 1, LA, m.at(iM), mLB.at(iMLB), (-1.0)*mLA.at(iMLA) ) * std::pow(-1, (-1.0)*mLA.at(iMLA)) * std::pow(2*LA + 1, 0.5);
+			    delta1 = KroneckerDelta(m.at(iM), 0) * factor;
+			    delta2 = factor;}
+		    
+			  if(delta1!=0 || delta2!=0){
+			    dummy = (finalIntegral1*delta1 + finalIntegral2*delta2)*
+			      m_wigner->wigner3j(LA, SA, JA, mLA.at(iMLA), mSA.at(iMSA), (-1.0)*mJA.at(iMJA))*
+			      m_wigner->wigner3j(LB, SB, JB, mLB.at(iMLB), mSB.at(iMSB), (-1.0)*mJB.at(iMJB))*
+			      m_wigner->wigner3j(1, 1, 0, m.at(iM), (-1.0)*m.at(iM), 0)*
+			      m_wigner->wigner3j(slight, 0.5, SB, m12.at(iM12), m4.at(iM4), (-1.0)*mSB.at(iMSB))*
+			      m_wigner->wigner3j(0.5, 0.5, SC, m3.at(iM3), m5.at(iM5), (-1.0)*mSC.at(iMSC))*
+			      m_wigner->wigner3j(slight, 0.5, SA, m12.at(iM12), m3.at(iM3), (-1.0)*mSA.at(iMSA))*
+			      m_wigner->wigner3j(0.5, 0.5, 1, m4.at(iM4), m5.at(iM5), m.at(iM))*				   
+			      std::pow(3 * (2*JA+1) * (2*SA+1) * (2*JB+1)* (2*SB+1) * (2*SC+1), 0.5)*
+			      std::pow(-1.0,SA-LA-mJA.at(iMJA))*
+			      std::pow(-1.0,SB-LB-mJB.at(iMJB))*
+			      std::pow(-1.0,1+m.at(iM)-mSA.at(iMSA)-mSB.at(iMSB)-mSC.at(iMSC));
+			  }else dummy = 0;
+		      
+			  innerSum+=dummy;
+			  dummy = 0;
+			}
+      outerSum += std::pow(innerSum,2); 
+    }
+  }
+  delete m_wigner;
+  return outerSum;
+}
+
+
+
+
+
 
 #endif

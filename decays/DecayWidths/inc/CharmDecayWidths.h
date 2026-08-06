@@ -1,7 +1,8 @@
 //CharmDecayWidths includes
-#ifndef CHARMECAYWIDTHS_H
+#ifndef CHARMDECAYWIDTHS_H
 #define CHARMDECAYWIDTHS_H
 
+#include "WignerSymbols.h"
 #include <string>
 #include <vector>
 
@@ -24,11 +25,11 @@ private:
   double L2 = 0.;    std::vector<double> mL2;  
   double SA = 0.5;   std::vector<double> mSA;
   double SB = 0.5;   std::vector<double> mSB;
-  double SC = 0;     std::vector<double> mSC;
+  //double SC = 0;     std::vector<double> mSC;
   double slight = 0; std::vector<double> m12; 
   std::vector<double> m23;
   double slightf = 1;std::vector<double> m24; 
-  double s = 1.0;    std::vector<double> m;   
+  //double s = 1.0;    std::vector<double> m;   
   double s1 = 0.5;   std::vector<double> m1;  
   double s2 = 0.5;   std::vector<double> m2;  
   double s3 = 0.5;   std::vector<double> m3;  
@@ -38,11 +39,37 @@ private:
   double LB = 0.0;  std::vector<double> mLB;
   double JB = 0.0;  std::vector<double> mJB;
 
+  // news
+  double SDQ = 0.0;  std::vector<double> mDQ;
+  double SSP = 0.0;  std::vector<double> mSP;
+  double SC = 0;     std::vector<double> mSC;
+  double SSC = 0;    // std::vector<double> mSC;
+  double S = 0;    // std::vector<double> mSC;
+  double s = 1.0;    std::vector<double> m;
+
+  
   int baryonFlag=0;
   int decayProd=0;
 
-  virtual double ALPHA_MES(int diagram);
 
+  //New for Coulomb
+  virtual double ClebschGordan(WignerSymbols *m_wigner,
+			       double l1, double l2, double l3,
+			       double m1, double m2, double m3);
+  virtual double ANGULAR_SUM_DI(double alpha, double alpha_mes, double k_value);
+  virtual double CBARIN_DI_GS(double alpha);
+  virtual double CBARFIN_DI_GS(double alpha);
+  virtual double CMESON_DI_GS(double alpha_mes);
+  virtual double C0_DI_GS(double alpha, double alpha_mes);
+  virtual double C1_DI_GS(double alpha, double alpha_mes);
+  virtual double BETA1_DI_GS(double alpha, double alpha_mes);
+  virtual double F00_DI_GS(double k_value, double alpha, double alpha_mes);
+  virtual double ARO0_DI_GS(double k_value, double alpha, double alpha_mes);
+  virtual double I010_DI_GS(double k_value, double alpha, double alpha_mes);
+
+  //ends here
+  
+  virtual double ALPHA_MES(int diagram);
   virtual int KroneckerDelta(double i, double j);
   virtual std::vector<double> getMomentumProjections(double j_angular);
   virtual double ANGULAR_SUM(double alpha_rho, double alpha_lam,
